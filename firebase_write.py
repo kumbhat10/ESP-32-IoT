@@ -9,7 +9,7 @@ Original file is located at
 ## **Import libraries**
 """
 
-pip install --upgrade firebase-admin
+#pip install --upgrade firebase-admin
 
 import firebase_admin
 from firebase_admin import credentials
