@@ -20,6 +20,8 @@ jobs:
       - run: echo "$FIREBASE_SA_JSON First_Name."
         env:
             FIREBASE_SA_JSON: ${{secrets.FIREBASE_SA_JSON}}
+      - run: echo $FIREBASE_SA_JSON
+      - run: echo "$FIREBASE_SA_JSON"
       - run: python firebase_write.py "$FIREBASE_SA_JSON"
         
 
