@@ -8,6 +8,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
+print(sys.argv[1])
 cred = firebase_admin.credentials.Certificate(json.loads(sys.argv[1])  )
 
 try:
