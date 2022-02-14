@@ -26,6 +26,9 @@ print(data)
 print("\n  Below is type of data")
 print(type(data))
 
+result = ast.literal_eval(input)
+print("\n  Below is type of result")
+print(type(result))
 
 # evalstr = "a = " + input
 # print("\n  Below is evalstr")
