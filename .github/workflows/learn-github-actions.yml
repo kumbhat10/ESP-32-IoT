@@ -19,6 +19,6 @@ jobs:
       - run: python -m pip install --upgrade firebase_admin
       - run: python firebase_write.py "$FIREBASE_SA_JSON"
         env:
-            FIREBASE_SA_JSON: '${{ secrets.FIREBASE_SA_JSON}}'
+            FIREBASE_SA_JSON: ${{ secrets.FIREBASE_SA_JSON}}
 
       
