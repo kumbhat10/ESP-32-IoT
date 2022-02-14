@@ -3,7 +3,7 @@
 import sys
 import json
 from datetime import datetime
-
+import time
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
@@ -14,6 +14,10 @@ print(sys.argv[1])
 data = json.loads(sys.argv[1]) 
 print("\n  Below is parsed JSON data")
 print(data)
+print("\n  Below is type of data")
+print(type(data))
+
+time.sleep(5)
 cred = firebase_admin.credentials.Certificate(data )
 
 try:
