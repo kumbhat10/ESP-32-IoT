@@ -1,5 +1,7 @@
 
 #pip install --upgrade firebase-admin
+import os
+
 import sys
 import json
 from datetime import datetime
@@ -8,8 +10,11 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
+
+a = os.environ.get("OS")
+print(a)
 print("\n  Below is input arguments")
-input = sys.argv[1]
+input = os.environ.get("FIREBASE_SA_JSON") #sys.argv[1]
 print(input)
 
 print("\n  Below is type of data")
@@ -21,11 +26,6 @@ print(data)
 print("\n  Below is type of data")
 print(type(data))
 
-data1 = json.loads(data) 
-print("\n  Below is parsed JSON data1")
-print(data1)
-print("\n  Below is type of data1")
-print(type(data1))
 
 # evalstr = "a = " + input
 # print("\n  Below is evalstr")
