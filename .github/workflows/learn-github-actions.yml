@@ -25,7 +25,7 @@ jobs:
         env:
             FIREBASE_SA_JSON: ${{secrets.FIREBASE_SA_JSON}}
             
-      - run: python firebase_write.py "$FIREBASE_SA_JSON"
+      - run: python firebase_write.py $FIREBASE_SA_JSON
         env:
             FIREBASE_SA_JSON: ${{secrets.FIREBASE_SA_JSON}}
         
