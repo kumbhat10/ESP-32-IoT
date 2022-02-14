@@ -21,6 +21,21 @@ print(data)
 print("\n  Below is type of data")
 print(type(data))
 
+data1 = json.loads(data) 
+print("\n  Below is parsed JSON data1")
+print(data1)
+print("\n  Below is type of data1")
+print(type(data1))
+
+# evalstr = "a = " + input
+# print("\n  Below is evalstr")
+# print(evalstr)
+# eval(evalstr)
+# print("\n  Below is a")
+# print(a)
+# print("\n  Below is type of a")
+# print(type(a))
+
 #cred = firebase_admin.credentials.Certificate(data )
 
 # try:
