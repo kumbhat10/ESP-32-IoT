@@ -1,7 +1,7 @@
 
 #pip install --upgrade firebase-admin
 import os
-
+import ast
 import sys
 import json
 from datetime import datetime
@@ -11,10 +11,8 @@ import time
 # from firebase_admin import db
 
 
-a = os.environ.get("OS")
-print(a)
 print("\n  Below is input arguments")
-input = os.environ.get("FIREBASE_SA_JSON") #sys.argv[1]
+input = os.environ.get("FIREBASE_SA_JSON") #sys.argv[1]  #
 print(input)
 
 print("\n  Below is type of data")
