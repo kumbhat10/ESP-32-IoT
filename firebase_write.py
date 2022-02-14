@@ -9,7 +9,10 @@ from firebase_admin import credentials
 from firebase_admin import db
 
 print(sys.argv[1])
-cred = firebase_admin.credentials.Certificate(json.loads(sys.argv[1])  )
+data = json.loads(sys.argv[1]) 
+print("\n")
+print(data)
+cred = firebase_admin.credentials.Certificate(data )
 
 try:
   firebase_admin.initialize_app(cred, {
