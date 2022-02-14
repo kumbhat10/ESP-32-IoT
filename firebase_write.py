@@ -11,7 +11,7 @@ from firebase_admin import db
 print("\n  Below is input arguments")
 
 print(sys.argv[1])
-data = json.loads(sys.argv[1]) 
+data = json.loads(str(sys.argv[1])) 
 print("\n  Below is parsed JSON data")
 print(data)
 print("\n  Below is type of data")
