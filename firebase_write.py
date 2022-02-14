@@ -17,7 +17,7 @@ print(data)
 print("\n  Below is type of data")
 print(type(data))
 
-time.sleep(5)
+#time.sleep(5)
 cred = firebase_admin.credentials.Certificate(data )
 
 try:
