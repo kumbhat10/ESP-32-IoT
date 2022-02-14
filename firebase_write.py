@@ -6,9 +6,9 @@ import sys
 import json
 from datetime import datetime
 import time
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import db
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import db
 
 
 a = os.environ.get("OS")
