@@ -2,23 +2,25 @@ name: learn-github-actions
 on: [push]
 jobs:
   Write-to-Firebase-Database:
-    runs-on: windows-2022
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
             python-version: '3.10.1' # Version range or exact version of a Python version to use, using SemVer's version range syntax
             architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-      - run: python -m pip install --upgrade pip
-      - run: pip install --upgrade firebase_admin
+      - name: Upgrade pip and install Firebase Admin SDK
+        run: python -m pip install --upgrade pip
+        run: pip install --upgrade firebase_admin
 
       - name: Decrypt GPG file
         run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output /path/to/some_file.json some_file.json.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output /firebase-key.json firebase-key.json.gpg
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
                         
-      - run: python firebase_write.py
+      - name: Run Python Function
+        run: python firebase_write.py
         env:
             FIREBASE_SA_JSON: ${{secrets.FIREBASE_SA_JSON}}
             FIREBASE_SA_JSON1: ${{secrets.FIREBASE_SA_JSON1}}
