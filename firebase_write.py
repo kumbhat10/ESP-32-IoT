@@ -20,7 +20,9 @@ print("\n  Below is input key")
 print(type(key))
 print("\n  Below is input data")
 print(type(data))
-cred = firebase_admin.credentials.Certificate(data )
+
+data1 = json.loads(data)
+cred = firebase_admin.credentials.Certificate(data1 )
 
 try:
   firebase_admin.initialize_app(cred, {
