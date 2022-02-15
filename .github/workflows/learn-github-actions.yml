@@ -24,7 +24,7 @@ jobs:
         run: dir
       
       - name: Run Python Function
-       -run: python firebase_write.py
+        run: python firebase_write.py
         env:
             FIREBASE_SA_JSON: ${{secrets.FIREBASE_SA_JSON}}
             FIREBASE_SA_JSON1: ${{secrets.FIREBASE_SA_JSON1}}
