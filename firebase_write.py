@@ -14,7 +14,11 @@ print("\n  Below is input arguments")
 #key = os.environ.get("FIREBASE_SA_JSON") #sys.argv[1]  #
 key = os.environ.get("FIREBASE_PRIVATE_KEY")
 
+p = key
+print("\n  Below is input arguments")
 
+print(p)
+print("\n")
 data = {
   "type": "service_account",
   "project_id": "ttl-iot",
@@ -29,6 +33,8 @@ data = {
 }
 
 print(data)
+print("\n  Below is input arguments")
+print(type(data))
 cred = firebase_admin.credentials.Certificate(data )
 
 try:
