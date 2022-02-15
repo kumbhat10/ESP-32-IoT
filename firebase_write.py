@@ -31,7 +31,7 @@ print(data2)
 print("\n  Below is input data2")
 print(type(data2))
 
-keypath = "/home/firebase-key.json"
+keypath = "/firebase-key.json"
 
 cred = firebase_admin.credentials.Certificate(keypath )
 
