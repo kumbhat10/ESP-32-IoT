@@ -12,7 +12,7 @@ jobs:
       
       - name: Decrypt GPG file
         run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output /firebase-key.json firebase-key.json.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output D:\firebase-key.json firebase-key.json.gpg     
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
             
