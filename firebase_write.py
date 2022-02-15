@@ -23,6 +23,15 @@ print(type(data))
 
 data1 = json.loads(data)
 print(data1)
+print("\n  Below is input data1")
+print(type(data1))
+
+data2 = json.dumps(data)
+print(data2)
+print("\n  Below is input data2")
+print(type(data2))
+
+
 cred = firebase_admin.credentials.Certificate(data1 )
 
 try:
