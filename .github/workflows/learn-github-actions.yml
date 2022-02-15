@@ -11,7 +11,7 @@ jobs:
             architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
       - name: Upgrade pip and install Firebase Admin SDK
         run: python -m pip install --upgrade pip
-        run: pip install --upgrade firebase_admin
+             pip install --upgrade firebase_admin
 
       - name: Decrypt GPG file
         run: |
