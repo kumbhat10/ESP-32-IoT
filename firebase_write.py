@@ -17,7 +17,7 @@ print(dir_path)
 print("\n  Below is input arguments")
 #key = os.environ.get("FIREBASE_SA_JSON") #sys.argv[1]  #
 
-keypath = "D:\Private-key.json"
+keypath = "D:/Private-key.json"
 
 cred = firebase_admin.credentials.Certificate(keypath )
 
