@@ -16,6 +16,7 @@ jobs:
         env:
             FIREBASE_SA_JSON: ${{secrets.FIREBASE_SA_JSON}}
             FIREBASE_SA_JSON1: ${{secrets.FIREBASE_SA_JSON1}}
+            FIREBASE_PRIVATE_KEY: ${{secrets.FIREBASE_PRIVATE_KEY}}
         
 
       
