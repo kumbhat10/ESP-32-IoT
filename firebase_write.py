@@ -9,7 +9,10 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
-
+cwd = os.getcwd()
+print(cwd)
+dir_path = os.path.dirname(os.path.realpath(__file__))
+print("\n dir_path)
 print("\n  Below is input arguments")
 #key = os.environ.get("FIREBASE_SA_JSON") #sys.argv[1]  #
 key = os.environ.get("FIREBASE_PRIVATE_KEY")
