@@ -12,29 +12,12 @@ from firebase_admin import db
 cwd = os.getcwd()
 print(cwd)
 dir_path = os.path.dirname(os.path.realpath(__file__))
-print(" dir_path")
+print(dir_path)
+
 print("\n  Below is input arguments")
 #key = os.environ.get("FIREBASE_SA_JSON") #sys.argv[1]  #
-key = os.environ.get("FIREBASE_PRIVATE_KEY")
-data = os.environ.get("FIREBASE_SA_JSON")
 
-print(data)
-print("\n  Below is input key")
-print(type(key))
-print("\n  Below is input data")
-print(type(data))
-
-data1 = json.loads(data)
-print(data1)
-print("\n  Below is input data1")
-print(type(data1))
-
-data2 = json.dumps(data)
-print(data2)
-print("\n  Below is input data2")
-print(type(data2))
-
-keypath = "D:\firebase-key.json"
+keypath = "D:\Private-key.json"
 
 cred = firebase_admin.credentials.Certificate(keypath )
 
