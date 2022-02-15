@@ -12,7 +12,7 @@ import time
 
 
 print("\n  Below is input arguments")
-input = os.environ.get("FIREBASE_SA_JSON") #sys.argv[1]  #
+input = repr(os.environ.get("FIREBASE_SA_JSON")) #sys.argv[1]  #
 print(input)
 
 print("\n  Below is type of data")
