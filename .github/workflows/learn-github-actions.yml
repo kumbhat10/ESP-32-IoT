@@ -20,9 +20,10 @@ jobs:
         run: python -m pip install --upgrade pip
              pip install --upgrade firebase_admin
                         
-      - name: Run Python Function
+      - name: Run dir cmd function
         run: dir
-        
+      
+      - name: Run Python Function
        -run: python firebase_write.py
         env:
             FIREBASE_SA_JSON: ${{secrets.FIREBASE_SA_JSON}}
