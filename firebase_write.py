@@ -13,27 +13,12 @@ from firebase_admin import db
 print("\n  Below is input arguments")
 #key = os.environ.get("FIREBASE_SA_JSON") #sys.argv[1]  #
 key = os.environ.get("FIREBASE_PRIVATE_KEY")
-
-p = key
-print("\n  Below is input arguments")
-
-print(p)
-print("\n")
-data = {
-  "type": "service_account",
-  "project_id": "ttl-iot",
-  "private_key_id": "60b933117f50f3e8a5d091b27ee11eaf07864dcc",
-  "private_key": key,
-  "client_email": "firebase-adminsdk-yrbg2@ttl-iot.iam.gserviceaccount.com",
-  "client_id": "102474256127526520693",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-yrbg2%40ttl-iot.iam.gserviceaccount.com"
-}
+data = os.environ.get("FIREBASE_SA_JSON")
 
 print(data)
-print("\n  Below is input arguments")
+print("\n  Below is input key")
+print(type(key))
+print("\n  Below is input data")
 print(type(data))
 cred = firebase_admin.credentials.Certificate(data )
 
