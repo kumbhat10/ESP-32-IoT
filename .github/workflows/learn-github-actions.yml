@@ -23,14 +23,14 @@ jobs:
         shell: bash      
      
      - name: Display the Env
-        run: printenv
-        shell: bash         
+       run: printenv
+       shell: bash         
            
      - name: Create new folder
-        run: pwd
+       run: pwd
              mkdir dushyant
              cd dushyant
-        shell: bash  
+       shell: bash  
         
       - name: Run Python Function
         run: python firebase_write.py
