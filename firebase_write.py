@@ -28,9 +28,9 @@ ref = db.reference('CheckLive')
 print("\nWriting to Firebase")
 now = datetime.now()
 current_time = now.strftime("%y-%m-%d %H:%M:%S")
-print("\nCurrent Time =", current_time)
 ref.set(current_time)
-
+sendCloudNotification()
+print("\nCurrent Time =", current_time)
 
 def sendCloudNotification():
     topic = 'Alert'
