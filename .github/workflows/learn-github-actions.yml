@@ -22,15 +22,15 @@ jobs:
         run: echo $PATH
         shell: bash      
      
-     - name: Display the Env
-       run: printenv
-       shell: bash         
+      - name: Display the Env
+        run: printenv
+        shell: bash         
            
-     - name: Create new folder
-       run: pwd
+      - name: Create new folder
+        run: pwd
              mkdir dushyant
              cd dushyant
-       shell: bash  
+        shell: bash  
         
       - name: Run Python Function
         run: python firebase_write.py
