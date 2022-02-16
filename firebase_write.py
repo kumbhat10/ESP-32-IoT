@@ -18,7 +18,7 @@ def sendCloudNotification():
     response = messaging.send(message) # Response is a message ID string.
     print('\nSuccessfully sent cloud notification :', response)
     
-#workspace = "D:" # for windows
+#Workspace = "D:" # for windows
 workspace = os.environ.get("GITHUB_WORKSPACE") #sys.argv[1]
 filename = 'Private-key.json'
 
