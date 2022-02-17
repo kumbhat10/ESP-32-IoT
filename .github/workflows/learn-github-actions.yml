@@ -5,11 +5,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # - uses: actions/setup-python@v2
-        # with:
-            # python-version: '3.10.1' # Version range or exact version of a Python version to use, using SemVer's version range syntax
-            # architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-      - name: Compile sketch
+      - uses: actions/setup-python@v2
+        with:
+            python-version: '3.10.1' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+            architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+
+      - name: Decrypt GPG file
+        run: |
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Private-key.json firebase-key.json.gpg     
+        env:
+            GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
+            
+      - name: Upgrade pip and install Firebase Admin SDK
+        run: python -m pip install --upgrade pip
+             pip install --upgrade firebase_admin                      
+      
+      - name: Firebase - Python function
+        run: python firebase_write.py    
+
+  Write-to-Firebase-Database:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Compile Arduino sketch
         uses: arduino/compile-sketches@v1
         with:
           # The default is to compile for the Arduino Uno board. If you want to compile for other boards, use the `fqbn` input.
@@ -19,34 +38,16 @@ jobs:
             - ./
           libraries: |
             # The "blink" sketch being compiled in this demo doesn't use any libraries, so just use an empty list
-            -       
-            
+            -     
+      
+      
       # - uses: arduino/compile-sketches@v1
         # with:
           # fqbn: "esp32:esp32:ESP32 Dev Module"
           # platforms: |
           # - source-url:             
               # "https://github.com/espressif/arduino-esp32/releases/download/1.0.6/esp32-1.0.6.zip"
-            # name: "esp32:esp32"
+            # name: "esp32:esp32"  
             
-                
-        
-              
-            
-      - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1      
-      
-      # - name: Decrypt GPG file
-        # run: |
-          # gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Private-key.json firebase-key.json.gpg     
-        # env:
-            # GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
-            
-      # - name: Upgrade pip and install Firebase Admin SDK
-        # run: python -m pip install --upgrade pip
-             # pip install --upgrade firebase_admin                      
-      
-      # - name: Firebase - Python function
-        # run: python firebase_write.py        
-
-      
+      # - name: Setup Arduino CLI
+        # uses: arduino/setup-arduino-cli@v1   
