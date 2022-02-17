@@ -23,7 +23,7 @@ jobs:
       - name: Firebase - Python function
         run: python firebase_write.py    
 
-  Write-to-Firebase-Database:
+  Arduino-compile-sketches:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
