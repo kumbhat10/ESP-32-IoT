@@ -9,15 +9,25 @@ jobs:
         # with:
             # python-version: '3.10.1' # Version range or exact version of a Python version to use, using SemVer's version range syntax
             # architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-            
-            
-      - uses: arduino/compile-sketches@v1
+      - name: Compile sketch
+        uses: arduino/compile-sketches@v1
         with:
-          fqbn: "esp32:esp32:ESP32 Dev Module"
-          platforms: |
-          - source-url:             
-              "https://github.com/espressif/arduino-esp32/releases/download/1.0.6/esp32-1.0.6.zip"
-            name: "esp32:esp32"
+          # The default is to compile for the Arduino Uno board. If you want to compile for other boards, use the `fqbn` input.
+          sketch-paths: |
+            # Configure the action to search all folders under the root of the repository for sketches and compile them.
+            # This is formatted as a YAML list, which makes it possible to have multiple sketch paths if needed.
+            - ./
+          libraries: |
+            # The "blink" sketch being compiled in this demo doesn't use any libraries, so just use an empty list
+            -       
+            
+      # - uses: arduino/compile-sketches@v1
+        # with:
+          # fqbn: "esp32:esp32:ESP32 Dev Module"
+          # platforms: |
+          # - source-url:             
+              # "https://github.com/espressif/arduino-esp32/releases/download/1.0.6/esp32-1.0.6.zip"
+            # name: "esp32:esp32"
             
                 
         
