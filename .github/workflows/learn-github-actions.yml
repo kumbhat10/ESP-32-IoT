@@ -31,9 +31,9 @@ jobs:
       - name: Compile Arduino sketch
         uses: arduino/compile-sketches@v1
         with:
-          fqbn: 'esp32:esp32:LoPy'
+          fqbn: 'esp32:esp32:ESP32 Dev Module'
           platforms: |
-            - source-url:             'https://github.com/espressif/arduino-esp32/releases/download/1.0.6/esp32-1.0.6.zip'
+            - source-url:'https://dl.espressif.com/dl/package_esp32_index.json'
               name: "esp32:esp32"  
           sketch-paths: |
             # Configure the action to search all folders under the root of the repository for sketches and compile them.
