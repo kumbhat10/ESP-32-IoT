@@ -29,7 +29,9 @@ jobs:
 
   Arduino-Setup-CLI:
     runs-on: ubuntu-latest
-    steps:           
+    steps:  
+      - name: Decrypt confidential Credentials GPG file
+        run: dir
       - name: Decrypt confidential Credentials GPG file
         run: |
           gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/credentials.h firebase-key-excavator.gpg
