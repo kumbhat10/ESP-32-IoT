@@ -34,7 +34,7 @@ jobs:
           fqbn: "esp32:esp32:esp32"
           platforms: |
             - name: "esp32:esp32"
-              source-url: "'https://dl.espressif.com/dl/package_esp32_index.json"
+              source-url: "https://dl.espressif.com/dl/package_esp32_index.json"
               
           sketch-paths: |
             # Configure the action to search all folders under the root of the repository for sketches and compile them.
