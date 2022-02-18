@@ -54,7 +54,7 @@ jobs:
       - name: Setup Arduino CLI
         uses: arduino/setup-arduino-cli@v1   
         
-      - name: Install libraries
+      - name: Setup Arduino CLI & Install libraries
         run: |
           arduino-cli config init       
           arduino-cli config set sketch.always_export_binaries true
