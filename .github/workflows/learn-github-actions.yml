@@ -39,25 +39,25 @@ jobs:
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 
-      - name: Setup Arduino CLI Tool
+      - name: Setup Arduino CLI framework
         uses: arduino/setup-arduino-cli@v1 
         
-      - name: Configure environment and configuration file
+      - name: Setup ENVIRONMENT and CONFIGURATION file
         run: |
           arduino-cli config init       
           arduino-cli config set sketch.always_export_binaries true
 
-      - name: ESP32 - Update core and download ESP32 module & boards
+      - name: ESP32 - Update core and download ESP32 modules & boards
         run: |
           arduino-cli config set board_manager.additional_urls https://dl.espressif.com/dl/package_esp32_index.json
           arduino-cli core update-index
           arduino-cli core install esp32:esp32
 
-      - name: Download & Install Google's FIrebase library for ESP32 
+      - name: Google's Firebase - Download & Install library for ESP32 
         run: |
           arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32"  
           
-      - name: Download & Install Adafruit PWM Servo Driver Library
+      - name: Adafruit PWM Servo Driver - Download & Install library
         run: |
           arduino-cli lib install "Adafruit PWM Servo Driver Library" 
           arduino-cli lib install "movingAvg"
