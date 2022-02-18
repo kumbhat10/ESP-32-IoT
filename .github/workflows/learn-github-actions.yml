@@ -56,6 +56,7 @@ jobs:
         
       - name: Install libraries
         run: |
+          arduino-cli config init       
           arduino-cli config set sketch.always_export_binaries true
           arduino-cli config set board_manager.additional_urls https://dl.espressif.com/dl/package_esp32_index.json
           arduino-cli core update-index
