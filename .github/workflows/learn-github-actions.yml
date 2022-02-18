@@ -56,9 +56,12 @@ jobs:
         
       - name: Install libraries
         run: |
+          arduino-cli config set sketch.always_export_binaries true
+          arduino-cli config set board_manager.additional_urls https://dl.espressif.com/dl/package_esp32_index.json
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32
           arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32"
           arduino-cli lib install "movingAvg"
           arduino-cli lib install "Adafruit PWM Servo Driver Library"
-        shell: bash
         
         
