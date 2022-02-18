@@ -9,6 +9,10 @@ jobs:
         with:
             python-version: '3.10.1' # Version range or exact version of a Python version to use, using SemVer's version range syntax
             architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+      - env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+        run: |
+          echo $EVENT_CONTEXT      
 
       - name: Decrypt GPG file
         run: |
@@ -51,6 +55,5 @@ jobs:
         uses: arduino/setup-arduino-cli@v1   
         
       - name: Install libraries
-        run: |
-        arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32"
-        arduino-cli lib install "movingAvg"
+        run:  arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32"
+        
