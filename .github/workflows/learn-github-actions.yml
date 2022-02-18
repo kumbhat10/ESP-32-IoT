@@ -45,7 +45,7 @@ jobs:
             -     
       
 
-  Arduino-Setup CLI:
+  Arduino-Setup-CLI:
     runs-on: ubuntu-latest
     steps:           
       - name: Setup Arduino CLI
