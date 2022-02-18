@@ -52,7 +52,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:           
       - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v1   
+        uses: arduino/setup-arduino-cli@v1 
+      
+      - name: Decrypt confidential Credentials GPG file
+        run: |
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/credentials.h firebase-key-excavator.gpg
+        env:
+            GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
         
       - name: Setup Arduino CLI & Install libraries
         run: |
@@ -66,3 +72,5 @@ jobs:
           arduino-cli lib install "Adafruit PWM Servo Driver Library"
         
         
+        
+        firebase-key-excavator

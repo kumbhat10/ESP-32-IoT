@@ -35,6 +35,7 @@ void FirebaseInit() {
   auth.user.email = USER_EMAIL;
   auth.user.password = USER_PASSWORD;
   Firebase.begin(&config, &auth);
+  Firebase.FCM.setServerKey(FIREBASE_FCM_SERVER_KEY);
   Firebase.reconnectWiFi(true);//  Firebase.setMaxErrorQueue(fbdo, 3);
   Serial.println("Connecting to Firebase..."); //while(Firebase
   Serial.println();
