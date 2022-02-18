@@ -31,32 +31,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Github Repository
-        uses: actions/checkout@v2    
-      
-      - name: Decrypt confidential Credentials GPG file
-        run: dir
+        uses: actions/checkout@v2      
         
-      - name: Decrypt confidential Credentials GPG file
+      - name: Decrypt confidential credentials GPG file to be used later
         run: |
           gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h Excavator/firebase-key-excavator.gpg
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 
-      - name: Setup Arduino CLI
+      - name: Setup Arduino CLI Tool
         uses: arduino/setup-arduino-cli@v1 
-      
-
         
-      - name: Setup Arduino CLI & Install libraries
+      - name: Configure environment and configuration file
         run: |
           arduino-cli config init       
           arduino-cli config set sketch.always_export_binaries true
+
+      - name: ESP32 - Update core and download ESP32 module & boards
+        run: |
           arduino-cli config set board_manager.additional_urls https://dl.espressif.com/dl/package_esp32_index.json
           arduino-cli core update-index
           arduino-cli core install esp32:esp32
-          arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32"
+
+      - name: Download & Install Google's FIrebase library for ESP32 
+        run: |
+          arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32"  
+          
+      - name: Download & Install Adafruit PWM Servo Driver Library
+        run: |
+          arduino-cli lib install "Adafruit PWM Servo Driver Library" 
           arduino-cli lib install "movingAvg"
-          arduino-cli lib install "Adafruit PWM Servo Driver Library"
+
+
 
   # Arduino-compile-sketches:
     # runs-on: ubuntu-latest
