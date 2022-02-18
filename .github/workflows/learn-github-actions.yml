@@ -56,4 +56,5 @@ jobs:
         
       - name: Install libraries
         run:  arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32"
+          arduino-cli lib install "movingAvg"
         
