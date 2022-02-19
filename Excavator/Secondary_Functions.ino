@@ -267,10 +267,9 @@ void sendMessage()
 {
   Serial.println("Send Firebase Cloud Messaging... ");
   //Read more details about HTTP v1 API here https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
-
   FCM_Legacy_HTTP_Message msg;
 
-  msg.targets.to = "Alert";
+  msg.targets.to = "/topics/Alert";
   msg.options.time_to_live = "1000";
   msg.options.priority = "high";
   msg.payloads.notification.title = "Excavator is Online! ";
@@ -280,10 +279,10 @@ void sendMessage()
   payload.add("D", "excavator" );
   msg.payloads.data = payload.raw();
 
-  if (Firebase.FCM.send(&fbdo, &msg)) //send message to recipient
-    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo).c_str());
+  if (Firebase.FCM.send(&fbdo1, &msg)) //send message to recipient
+    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo1).c_str());
   else
-    Serial.println(fbdo.errorReason());
+    Serial.println(fbdo1.errorReason());
 }
 
 void getLocalTime()

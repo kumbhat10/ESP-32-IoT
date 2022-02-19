@@ -25,9 +25,12 @@ jobs:
              pip install --upgrade firebase_admin                      
       
       - name: Firebase - Python function
-        run: python firebase_write.py    
+        run: python Python_Scripts/firebase_write.py
 
-  Arduino-Setup-CLI:
+      - name: Upload firmware - Python function
+        run: python Python_Scripts/firebase_upload_firmware.py "Excavator/Excavator.ino" "new2.bin"       
+
+  Firmware-Software-Build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Github Repository
@@ -61,6 +64,11 @@ jobs:
         run: |
           arduino-cli lib install "Adafruit PWM Servo Driver Library" 
           arduino-cli lib install "movingAvg"
+      
+      - name: Compile & build binary firmware file
+        run: |
+          arduino-cli 
+          arduino-cli lib install "movingAvg"          
 
 
 

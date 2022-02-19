@@ -1,13 +1,13 @@
 #include <WiFi.h>
 #include <analogWrite.h>
-#define currentFirmware 1.1
+#define FirmwareVersion 1.1
 #include "HardwareSerial.h"
 #include "time.h"
 #include <Firebase_ESP_Client.h>
 #include "credentials.h"
 #include <addons/TokenHelper.h>
 #include <addons/RTDBHelper.h>
-
+#include <EEPROM.h>
 #include <movingAvg.h>                  // https://github.com/JChristensen/movingAvg
 movingAvg battVoltage(20);
 
@@ -103,6 +103,16 @@ void logMemory() {
 }
 void setup()
 {
+  Serial.begin(115200);
+  Serial.print("Current firmware version is "); Serial.println(FirmwareVersion);
+  EEPROM.begin(512);
+  //  EEPROM.write(12, 33);  // comment out next 3 lines after first upload, re upload sketch, and check values.
+  //  EEPROM.write(13, 11);
+  //  EEPROM.commit();
+  Serial.println();
+  Serial.print("eeprom12: ");  Serial.println(EEPROM.read(12));
+  Serial.print("eeprom13: ");  Serial.println(EEPROM.read(13));
+
   log_d("Total heap: %d", ESP.getHeapSize());
   log_d("Free heap: %d", ESP.getFreeHeap());
   log_d("Total PSRAM: %d", ESP.getPsramSize());
@@ -114,8 +124,6 @@ void setup()
   free(psdRamBuffer);
   logMemory();
 
-
-  Serial.begin(115200);
   Serial7600.begin(115200, SERIAL_8N1, ATrx, ATtx); // 34-RX 25-TX of ESP-Wrover
   battVoltage.begin();
   Wire.begin(I2C_SDA, I2C_SCL);// Initialize I2C connection
