@@ -88,13 +88,14 @@ jobs:
       - name: Github Syntax - previous step context
         run: echo "${{ steps.checksum.outputs.output2 }}"
 
-      - run: echo ${{ env }}
+      - run: echo ${{ env.current_firmware_name }}
 
       # - name: Deploy new S/W to Excavator
       #   run: |
       #     python Python_Scripts/firebase_deploy_firmware.py
       #   env:
       #     EVENT_CONTEXT: ${{ toJSON(github.event) }}
+      #     FIRMWARE_NAME: ${{ env.current_firmware_name }}
       #     COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
       #     COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
       #
