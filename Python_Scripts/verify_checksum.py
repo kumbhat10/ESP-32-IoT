@@ -70,12 +70,12 @@ event_context_json['_firmware_time'] = int(commit_time)
 doc_ref = doc_ref_firmware.document(current_firmware_name).set(event_context_json)
 
 print( bc.WARNING + '\nmd5 checksum of previous firmware ' + last_firmware_name + ' : ' + last_firmware_checksum+ bc.ENDC)
-print( bc.OKGREEN + '\nmd5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum+ bc.ENDC)
+print( bc.OKGREEN +   'md5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum+ bc.ENDC)
 
 if (last_firmware_checksum == current_firmware_checksum):
-    print( bc.FAIL + bc.BOLD +"Both the firmware have same checksum " + current_firmware_checksum + bc.ENDC)
+    print( bc.FAIL + bc.BOLD +"\nBoth S/W have same checksum " + current_firmware_checksum + bc.ENDC)
 else:
-    print( bc.OKGREEN  + bc.BOLD + "Both the firmware have different checksum " + current_firmware_checksum + bc.ENDC)
+    print( bc.OKGREEN  + bc.BOLD + "\nBoth S/W have different checksum " + current_firmware_checksum + bc.ENDC)
 
 def upload_to_cloud():
     storage_client = storage.Client.from_service_account_json(keypath)
