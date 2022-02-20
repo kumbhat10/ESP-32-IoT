@@ -2,7 +2,7 @@ import hashlib
 import os
 import json
 import firebase_admin
-from firebase_admin import credentials, db, messaging, firestore
+from firebase_admin import credentials, db, firestore
 from google.cloud import storage
 from dateutil import parser
 class bc:
@@ -14,7 +14,7 @@ class bc:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-print("My Python Script")
+
 workspace = os.environ.get("GITHUB_WORKSPACE")
 event_context_string = os.environ.get("EVENT_CONTEXT")
 
@@ -88,9 +88,10 @@ upload_to_cloud()
 ## Save to environment
 env_file = os.getenv('GITHUB_ENV')
 env_dict = {'last_firmware_name': last_firmware_name, 'current_firmware_checksum': current_firmware_checksum, 'current_firmware_name': current_firmware_name}
+print(env_dict)
 for key in env_dict:
   with open(env_file, "a") as myfile:
-      myfile.write( key +  "=" + env_dict[key])
+      myfile.write( key +  '=' + env_dict[key] + '\n')
 
 # ref = db.reference('Excavator/Firmware')
 # print("\nWriting to Firebase")

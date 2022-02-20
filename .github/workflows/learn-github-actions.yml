@@ -90,15 +90,15 @@ jobs:
 
       - run: echo ${{ env }}
 
-      - name: Deploy new S/W to Excavator - Python function
-        run: |
-          python Python_Scripts/firebase_deploy_firmware.py
-        env:
-          EVENT_CONTEXT: ${{ toJSON(github.event) }}
-          COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
-          COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
-
-      # - name: Send Email & Cloud notification to all the users - Python function
+      # - name: Deploy new S/W to Excavator
+      #   run: |
+      #     python Python_Scripts/firebase_deploy_firmware.py
+      #   env:
+      #     EVENT_CONTEXT: ${{ toJSON(github.event) }}
+      #     COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
+      #     COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
+      #
+      # # - name: Send Email & Cloud notification to all the users - Python function
         # run: |
           # python Python_Scripts/send_email.py
         # env:

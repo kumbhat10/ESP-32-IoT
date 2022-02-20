@@ -5,9 +5,17 @@ import sys
 from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials, db, messaging
-from google.cloud import storage
-from dateutil import parser
 
+from dateutil import parser
+class bc:
+    HEADER = '\033[95m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 workspace = os.environ.get("GITHUB_WORKSPACE")
 commit_timestamp = parser.parse(os.environ.get("COMMIT_TIMESTAMP")).strftime("%Y%m%d_%H%M%S")
 destination_blob_name = 'Firmware_' + commit_timestamp + '_10'
@@ -29,8 +37,3 @@ ref = db.reference('Excavator/Control/data/Firmware')
 print("\nWriting to Firebase")
 ref.set(destination_blob_name)
 print(destination_blob_name)
-
-
-    
-
-
