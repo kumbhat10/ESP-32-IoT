@@ -42,5 +42,5 @@ print( bc.OKGREEN + "\nWriting to Firebase"+ bc.ENDC)
 
 ref = db.reference('Excavator/Control/data/Firmware')
 ref.set(current_firmware_name)
-ref = db.reference('Excavator/Control/Firmware')
+ref = db.reference('Excavator/Firmware')
 ref.set({'Name': current_firmware_name, 'md5 Checksum': current_firmware_checksum})

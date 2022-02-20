@@ -77,15 +77,12 @@ jobs:
 
       - name: Checksum validation, Determine new Firmware version, Upload Firmware to cloud
         run: |
-          output1=$(python Python_Scripts/verify_checksum.py)
-          echo "::set-output name=output2::$output1"
+          python Python_Scripts/verify_checksum.py          
         id: checksum
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
           COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
           COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
-
-      - run: echo ${{ env.current_firmware_name }}
 
       - name: Deploy new S/W to Excavator
         run: |
