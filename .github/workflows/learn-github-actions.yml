@@ -29,7 +29,7 @@ jobs:
              pip install python-dateutil --upgrade
              pip install pyserial --upgrade
              pip install yagmail --upgrade
-             pip install --upgrade keyring
+             pip install keyring --upgrade
              
       - name: Install Firebase Admin SDK python libraries
         run: pip install --upgrade firebase_admin  
