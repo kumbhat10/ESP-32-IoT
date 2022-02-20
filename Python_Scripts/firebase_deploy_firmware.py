@@ -18,7 +18,7 @@ class bc:
     UNDERLINE = '\033[4m'
 
 current_firmware_name = os.environ.get("current_firmware_name")
-current_firmware_checksum = = os.environ.get("current_firmware_checksum")
+current_firmware_checksum = os.environ.get("current_firmware_checksum")
 workspace = os.environ.get("GITHUB_WORKSPACE")
 
 filename = 'Python_Scripts/Private-key.json'
