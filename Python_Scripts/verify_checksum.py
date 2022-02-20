@@ -5,6 +5,15 @@ import firebase_admin
 from firebase_admin import credentials, db, messaging, firestore
 from google.cloud import storage
 from dateutil import parser
+class bc:
+    HEADER = '\033[95m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 workspace = os.environ.get("GITHUB_WORKSPACE")
 event_context_string = os.environ.get("EVENT_CONTEXT")
@@ -32,11 +41,11 @@ def firebase_login():
         'databaseURL': 'https://ttl-iot-default-rtdb.europe-west1.firebasedatabase.app'
     })
     except ValueError:
-      print('\nGoogle Firebase - Already initialized\n')
+      print( bc.OKGREEN +'\nGoogle Firebase - Already initialized\n' + bc.ENDC)
     except:
-      print('\nGoogle Firebase - Error occured\n')
+      print(bc.FAIL + '\nGoogle Firebase - Error occured\n'+ bc.ENDC)
     else:
-      print('\nGoogle Firebase - Initialized Successfully\n')
+      print(bc.WARNING + '\nGoogle Firebase - Initialized Successfully\n'+ bc.ENDC)
 firebase_login()
 
 ## Get last firmware Version & CHecksum
@@ -60,16 +69,20 @@ event_context_json['_firmware_date'] = int(commit_date)
 event_context_json['_firmware_time'] = int(commit_time)
 doc_ref = doc_ref_firmware.document(current_firmware_name).set(event_context_json)
 
-print('\nmd5 checksum of previous firmware ' + last_firmware_name + ' : ' + last_firmware_checksum)
-print('\nmd5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum)
+print( bc.WARNING + '\nmd5 checksum of previous firmware ' + last_firmware_name + ' : ' + last_firmware_checksum+ bc.ENDC)
+print( bc.OKGREEN + '\nmd5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum+ bc.ENDC)
+
 if(last_firmware_checksum == current_firmware_checksum):
-    print("Both the firmware have same checksum " + current_firmware_checksum)
+    print( bc.FAIL + "Both the firmware have same checksum " + current_firmware_checksum + bc.ENDC)
+elif:
+    print( bc.OKGREEN + "Both the firmware have different checksum " + current_firmware_checksum + bc.ENDC)
+
 def upload_to_cloud():
     storage_client = storage.Client.from_service_account_json(keypath)
     bucket = storage_client.bucket('ttl-iot.appspot.com')
     blob = bucket.blob(current_firmware_file_name)
     blob.upload_from_filename(raw_bin_file_path)
-    print("File {} uploaded to {}.".format(raw_bin_file_path, current_firmware_file_name))
+    print(bc.OKGREEN + "File {} uploaded to {}.".format(raw_bin_file_path, current_firmware_file_name)  + bc.ENDC)
 upload_to_cloud()
 
 # ref = db.reference('Excavator/Firmware')
