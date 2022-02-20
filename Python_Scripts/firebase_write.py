@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials, db, messaging
-
+from dateutil import parser
 
 ## Function to send mobile cloud notification to all the users
 def sendCloudNotification():
@@ -40,11 +40,14 @@ else:
 ref = db.reference('CheckLive')
 
 print("\nWriting to Firebase")
-now = datetime.now()
-current_time = now.strftime("%y-%m-%d %H:%M:%S")
-ref.set(current_time)
+# now = datetime.now()
+# current_time = now.strftime("%y-%m-%d %H:%M:%S")
+
+commit_timestamp = parser.parse(os.environ.get(COMMIT_TIMESTAMP)).strftime("%Y%m%d_%H%M%S")
+
+ref.set(commit_timestamp)
 sendCloudNotification()
-print("\nCurrent Time =", current_time)
+print("\nCurrent Time =", commit_timestamp)
 
 
     

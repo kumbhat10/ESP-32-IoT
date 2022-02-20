@@ -19,7 +19,7 @@ void WiFiSetup() {
 }
 
 String parentPath = "Excavator/Control/data";
-String childPath[13] = {"/Buzz", "/bs", "/msg", "/AT", "/pwr", "/z1", "/z2", "/z3", "/z4", "/z5", "/z6", "/z7", "/z8"};
+String childPath[14] = {"/Buzz", "/bs", "/msg", "/AT", "/pwr", "/z1", "/z2", "/z3", "/z4", "/z5", "/z6", "/z7", "/z8", "/Firmware"};
 
 void AllTurnOff() {
   Serial.println("Turnin All off PWM");
@@ -32,11 +32,12 @@ void FirebaseInit() {
   config.api_key = API_KEY;
   config.database_url = DATABASE_URL;
   config.token_status_callback = tokenStatusCallback;
+  config.fcs.download_buffer_size = 2048;
   auth.user.email = USER_EMAIL;
   auth.user.password = USER_PASSWORD;
   Firebase.begin(&config, &auth);
   Firebase.FCM.setServerKey(FIREBASE_FCM_SERVER_KEY);
-  Firebase.reconnectWiFi(true);//  Firebase.setMaxErrorQueue(fbdo, 3);
+  Firebase.reconnectWiFi(true);
   Serial.println("Connecting to Firebase..."); //while(Firebase
   Serial.println();
   while (!Firebase.ready()) {
@@ -45,7 +46,7 @@ void FirebaseInit() {
   buzOnce();
   digitalWrite(LED_BUILTIN, LOW); ledState = true;
   Serial.println("Sending Cloud message notification...");
-  sendMessage();
+  if (!newFirmwareAnnounce) sendMessage("Excavator is Online! ", "Excavator was restarted");
   buzOnce();
   Serial.println("Begin streaming");
   if (!Firebase.RTDB.beginMultiPathStream(&stream, parentPath))
@@ -195,22 +196,47 @@ void streamCallback(MultiPathStream stream)
             drive(8, i8);
             break;
           }
+        case 13: {//Firmware updates
+            fv_name = stream.value.c_str();
+            if(newFirmwareAnnounce) {
+              sendMessage("Firmware updated ", fv_name + " successfully installed");
+              newFirmwareAnnounce = false;
+            }
+            Serial.print("Firmware Update: ");
+            Serial.println(fv_name);
+            if (firmwareVersion != fv_name.substring(25).toInt())
+            {
+              newFirmware = true;
+              newFirmwareVersion = fv_name.substring(25).toInt();
+              Serial.print("New Firmware Found: ");
+              Serial.println(fv_name.substring(25));  //8_8_6_x
+              updateFirmware(fv_name);
+            }
+          }
       }
     }
   }
 }
 
+void updateFirmware(String firmwareName) {
+//  fv_name = firmwareName;
+//  Firebase.RTDB.removeMultiPathStreamCallback(&stream);
+  sendMessage("Downloading new firmware", fv_name);
+  if (!Firebase.Storage.downloadOTA(&stream, STORAGE_BUCKET_ID, firmwareName + ".bin", fcsDownloadCallback))
+    Serial.println(stream.errorReason());
+}
+
 void drive(int channel, int i) {
-  //  if (i == 0) {
-  //    pca9685.setPWM(channel - 1, 0, 0);
-  //    pca9685.setPWM(channel + 7, 0, 0);
-  //  } else if (i > 0) {
-  //    pca9685.setPWM(channel + 7, 0, 0);
-  //    pca9685.setPWM(channel - 1, 0, pwm_on);
-  //  } else if (i < 0) {
-  //    pca9685.setPWM(channel - 1, 0, 0);
-  //    pca9685.setPWM(channel + 7, 0, pwm_on);
-  //  }
+    if (i == 0) {
+      pca9685.setPWM(channel - 1, 0, 0);
+      pca9685.setPWM(channel + 7, 0, 0);
+    } else if (i > 0) {
+      pca9685.setPWM(channel + 7, 0, 0);
+      pca9685.setPWM(channel - 1, 0, pwm_on);
+    } else if (i < 0) {
+      pca9685.setPWM(channel - 1, 0, 0);
+      pca9685.setPWM(channel + 7, 0, pwm_on);
+    }
 }
 
 void checkDriveDelay() {
@@ -263,26 +289,25 @@ void streamTimeoutCallback(bool timeout)
     Serial.printf("error code: %d, reason: %s\n\n", stream.httpCode(), stream.errorReason().c_str());
 }
 
-void sendMessage()
+void sendMessage(String title, String body)
 {
   Serial.println("Send Firebase Cloud Messaging... ");
   //Read more details about HTTP v1 API here https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
   FCM_Legacy_HTTP_Message msg;
-
   msg.targets.to = "/topics/Alert";
   msg.options.time_to_live = "1000";
   msg.options.priority = "high";
-  msg.payloads.notification.title = "Excavator is Online! ";
-  msg.payloads.notification.body = "Excavator was restarted";
-
+  msg.payloads.notification.title = title; //"Excavator is Online! ";
+  msg.payloads.notification.body = body; //"Excavator was restarted";
   FirebaseJson payload;    //all data key-values should be string
   payload.add("D", "excavator" );
   msg.payloads.data = payload.raw();
-
-  if (Firebase.FCM.send(&fbdo1, &msg)) //send message to recipient
-    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo1).c_str());
-  else
-    Serial.println(fbdo1.errorReason());
+  if (Firebase.FCM.send(&stream, &msg)) //send message to recipient
+    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&stream).c_str());
+  else {
+    Serial.println("Cloud messaging failed");
+    Serial.println(stream.errorReason());
+  }
 }
 
 void getLocalTime()
@@ -381,4 +406,33 @@ void blinkLED1() {
   }
   ledState = !ledState;
   delay(ledBlinkTime);
+}
+//The Firebase Storage download callback function
+void fcsDownloadCallback(FCS_DownloadStatusInfo info)
+{
+  if (info.status == fb_esp_fcs_download_status_init)
+  {
+    Serial.printf("Downloading firmware %s (%d)\n", info.remoteFileName.c_str(), info.fileSize);
+    sendMessage("New firmware " + fv_name, "Downloading new firmware....");
+  }
+  else if (info.status == fb_esp_fcs_download_status_download)
+  {
+    Serial.printf("Downloaded %d%s\n", (int)info.progress, "%");
+  }
+  else if (info.status == fb_esp_fcs_download_status_complete)
+  {
+    sendMessage("New firmware " + fv_name , "Downloaded and restarting....");
+    EEPROM.write(2, newFirmwareVersion);
+    EEPROM.commit();
+    Serial.println("Update firmware completed.");
+    Serial.println();
+    Serial.println("ESP32 Restarting in 3 seconds...\n\n");
+    delay(3000);
+    ESP.restart();
+  }
+  else if (info.status == fb_esp_fcs_download_status_error)
+  {
+    Serial.println("Download " + fv_name + " failed " + info.errorMsg.c_str());
+    sendMessage("Download firmware failed !", fv_name + " : " + info.errorMsg.c_str());
+  }
 }

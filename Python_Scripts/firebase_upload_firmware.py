@@ -9,7 +9,8 @@ from google.cloud import storage
 
 bucket_name = 'ttl-iot.appspot.com'
 source_file_name = sys.argv[1]
-destination_blob_name = sys.argv[2]
+commit_timestamp = parser.parse(os.environ.get(COMMIT_TIMESTAMP)).strftime("%Y%m%d_%H%M%S")
+destination_blob_name = 'Firmware_' + commit_timestamp
 
 ## Function to send mobile cloud notification to all the users
 def sendCloudNotification():
@@ -49,11 +50,11 @@ else:
 
 ref = db.reference('Excavator/Firmware Upload')
 print("\nWriting to Firebase")
-now = datetime.now()
-current_time = now.strftime("%y-%m-%d %H:%M:%S")
-ref.set(current_time)
+# now = datetime.now()
+# current_time = now.strftime("%y-%m-%d %H:%M:%S")
+ref.set(commit_timestamp)
 sendCloudNotification()
-print("\nCurrent Time =", current_time)
+print("\nCurrent Time =", commit_timestamp)
 
 
     

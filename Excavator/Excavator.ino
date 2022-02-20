@@ -29,46 +29,52 @@ char date1 [8]; char time1 [10];
 int date2 = 0;
 
 bool ledState = true;
-double ledStateBlinkCount = 3;
+volatile double ledStateBlinkCount = 3;
 int ledBlinkTime = 40; //in milliseconds
-int ledPrevMillis = 0;
-bool ATbusy = false;
+volatile int ledPrevMillis = 0;
+volatile bool ATbusy = false;
 bool buzState = false;
 double buzStateBlinkCount = 1;
 int buzBlinkTime = 20; //in milliseconds
-int buzPrevMillis = 0;
+volatile int buzPrevMillis = 0;
 int buz_f = 180;
 int pwm_on = 4095;
 int on_time = 700;
 int on_time_long = 1200;
 
-int z1_millis = 0;
-int z2_millis = 0;
-int z3_millis = 0;
-int z4_millis = 0;
-int z5_millis = 0;
-int z6_millis = 0;
-int z7_millis = 0;
-int z8_millis = 0;
-bool z1s = false;
-bool z2s = false;
-bool z3s = false;
-bool z4s = false;
-bool z5s = false;
-bool z6s = false;
-bool z7s = false;
-bool z8s = false;
-int i1 = 0;
-int i2 = 0;
-int i3 = 0;
-int i4 = 0;
-int i5 = 0;
-int i6 = 0;
-int i7 = 0;
-int i8 = 0;
-FirebaseData stream, streamAT, fbdo, fbdo1;
+volatile int z1_millis = 0;
+volatile int z2_millis = 0;
+volatile int z3_millis = 0;
+volatile int z4_millis = 0;
+volatile int z5_millis = 0;
+volatile int z6_millis = 0;
+volatile int z7_millis = 0;
+volatile int z8_millis = 0;
+volatile bool z1s = false;
+volatile bool z2s = false;
+volatile bool z3s = false;
+volatile bool z4s = false;
+volatile bool z5s = false;
+volatile bool z6s = false;
+volatile bool z7s = false;
+volatile bool z8s = false;
+volatile int i1 = 0;
+volatile int i2 = 0;
+volatile int i3 = 0;
+volatile int i4 = 0;
+volatile int i5 = 0;
+volatile int i6 = 0;
+volatile int i7 = 0;
+volatile int i8 = 0;
+FirebaseData stream, fbdo, fbdo1;
 FirebaseAuth auth; FirebaseConfig config;
 bool taskCompleted = false;
+
+volatile bool newFirmware = false;
+volatile bool newFirmwareAnnounce = false;
+volatile int firmwareVersion = 0; //EEPROM.read(1); address 1
+volatile int newFirmwareVersion = 0; //EEPROM.read(2); address 2
+String fv_name = ""; 
 
 HardwareSerial Serial7600(1);
 
@@ -89,29 +95,36 @@ class TaskScheduler {
     }
 };
 
-void demo() {
-  //  Serial.println("Demo  ");
-  //  Serial.println(char(26)); //for SUB printu
-  //  Serial7600.println("AT");
+void logMemory() {
+  log_d("Used PSRAM: %d", ESP.getPsramSize() - ESP.getFreePsram());
 }
+
 TaskScheduler localTimeTask(1000, getLocalTime);
 TaskScheduler bvCheckTask(25, CheckVoltage);
 TaskScheduler batteryVoltageTask(1000, ReportVoltage);
 TaskScheduler gpsUpdateTask(4000, gpsRequest);
-void logMemory() {
-  log_d("Used PSRAM: %d", ESP.getPsramSize() - ESP.getFreePsram());
-}
+
 void setup()
 {
   Serial.begin(115200);
-  Serial.print("Current firmware version is "); Serial.println(FirmwareVersion);
+  Serial.println();  Serial.println();  Serial.println();
   EEPROM.begin(512);
-  //  EEPROM.write(12, 33);  // comment out next 3 lines after first upload, re upload sketch, and check values.
-  //  EEPROM.write(13, 11);
-  //  EEPROM.commit();
-  Serial.println();
-  Serial.print("eeprom12: ");  Serial.println(EEPROM.read(12));
-  Serial.print("eeprom13: ");  Serial.println(EEPROM.read(13));
+
+//  EEPROM.write(1, 1); //remove it - set newFirmwareVersion to 1
+//  EEPROM.write(2, 1); //remove it - set newFirmwareVersion to 1
+//  EEPROM.commit(); //remove it
+  
+  firmwareVersion = EEPROM.read(1); Serial.print("old ver e1 "); Serial.println(EEPROM.read(1));
+  newFirmwareVersion = EEPROM.read(2); Serial.print("old ver e1 "); Serial.println(EEPROM.read(2));
+  if (newFirmwareVersion != firmwareVersion) {
+    firmwareVersion = EEPROM.read(2);
+    EEPROM.write(1, newFirmwareVersion);
+    EEPROM.commit();
+    newFirmwareAnnounce = true;
+    Serial.println("Firmware update successfull : ");
+  }
+  Serial.print("Current firmware version is : ");  Serial.println(EEPROM.read(1));  Serial.println();
+
 
   log_d("Total heap: %d", ESP.getHeapSize());
   log_d("Free heap: %d", ESP.getFreeHeap());
@@ -146,12 +159,12 @@ void loop()
   BlinkLED();
   checkDriveDelay();
   PlayBuzzer();
-  bvCheckTask.run();
+  if(!newFirmware) bvCheckTask.run();
   checkDriveDelay();
-  batteryVoltageTask.run();
+  if(!newFirmware) batteryVoltageTask.run();
   checkDriveDelay();
-  localTimeTask.run();
-  if (!ATbusy) gpsUpdateTask.run();
+  if(!newFirmware) localTimeTask.run();
+  if (!ATbusy && !newFirmware) gpsUpdateTask.run();
   checkDriveDelay();
 }
 
