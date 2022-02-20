@@ -69,8 +69,8 @@ event_context_json['_firmware_date'] = int(commit_date)
 event_context_json['_firmware_time'] = int(commit_time)
 doc_ref = doc_ref_firmware.document(current_firmware_name).set(event_context_json)
 
-print( bc.WARNING + '\nmd5 checksum of previous firmware ' + last_firmware_name + ' : ' + last_firmware_checksum+ bc.ENDC)
-print( bc.OKGREEN +   'md5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum+ bc.ENDC)
+print( bc.WARNING + '\nmd5 checksum of previous firmware ' + last_firmware_name + ' : ' + last_firmware_checksum + bc.ENDC)
+print( bc.OKGREEN +   'md5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum + bc.ENDC)
 
 if (last_firmware_checksum == current_firmware_checksum):
     print( bc.FAIL + bc.BOLD +"\nBoth S/W have same checksum " + current_firmware_checksum + bc.ENDC)
@@ -85,9 +85,12 @@ def upload_to_cloud():
     print(bc.OKGREEN + "New firmware uploaded to {}.".format(current_firmware_file_name)  + bc.ENDC)
 upload_to_cloud()
 
+## Save to environment
 env_file = os.getenv('GITHUB_ENV')
-with open(env_file, "a") as myfile:
-    myfile.write("firmware="+current_firmware_name)
+env_dict = {'last_firmware_name': last_firmware_name, 'current_firmware_checksum': current_firmware_checksum, 'current_firmware_name': current_firmware_name}
+for key in env_dict:
+  with open(env_file, "a") as myfile:
+      myfile.write( key +  "=" + env_dict[key])
 
 # ref = db.reference('Excavator/Firmware')
 # print("\nWriting to Firebase")
