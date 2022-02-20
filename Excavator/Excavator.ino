@@ -1,5 +1,4 @@
 #include <WiFi.h>
-#include <analogWrite.h>
 #define FirmwareVersion 1.1
 #include "HardwareSerial.h"
 #include "time.h"
