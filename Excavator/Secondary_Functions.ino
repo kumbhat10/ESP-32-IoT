@@ -22,7 +22,7 @@ String parentPath = "Excavator/Control/data";
 String childPath[14] = {"/Buzz", "/bs", "/msg", "/AT", "/pwr", "/z1", "/z2", "/z3", "/z4", "/z5", "/z6", "/z7", "/z8", "/Firmware"};
 
 void AllTurnOff() {
-//  Serial.println("Turnin All off PWM");
+  //  Serial.println("Turnin All off PWM");
   for (int i = 0; i <= 15; i++) {
     pca9685.setPWM(i, 0, 0); // 0-7 all high - directly connected
   }
@@ -38,7 +38,7 @@ void FirebaseInit() {
   Firebase.begin(&config, &auth);
   Firebase.FCM.setServerKey(FIREBASE_FCM_SERVER_KEY);
   Firebase.reconnectWiFi(true);
-  Serial.println("Connecting to Firebase..."); //while(Firebase
+  Serial.println("Connecting to Google Firebase..."); //while(Firebase
   Serial.println();
   while (!Firebase.ready()) {
     blinkLED1();
@@ -198,7 +198,7 @@ void streamCallback(MultiPathStream stream)
           }
         case 13: {//Firmware updates
             fv_name = stream.value.c_str();
-            if(newFirmwareAnnounce) {
+            if (newFirmwareAnnounce) {
               sendMessage("Firmware updated ", fv_name + " successfully installed");
               newFirmwareAnnounce = false;
             }
@@ -219,24 +219,24 @@ void streamCallback(MultiPathStream stream)
 }
 
 void updateFirmware(String firmwareName) {
-//  fv_name = firmwareName;
-//  Firebase.RTDB.removeMultiPathStreamCallback(&stream);
+  //  fv_name = firmwareName;
+  //  Firebase.RTDB.removeMultiPathStreamCallback(&stream);
   sendMessage("Downloading new firmware", fv_name);
   if (!Firebase.Storage.downloadOTA(&stream, STORAGE_BUCKET_ID, firmwareName + ".bin", fcsDownloadCallback))
     Serial.println(stream.errorReason());
 }
 
 void drive(int channel, int i) {
-    if (i == 0) {
-      pca9685.setPWM(channel - 1, 0, 0);
-      pca9685.setPWM(channel + 7, 0, 0);
-    } else if (i > 0) {
-      pca9685.setPWM(channel + 7, 0, 0);
-      pca9685.setPWM(channel - 1, 0, pwm_on);
-    } else if (i < 0) {
-      pca9685.setPWM(channel - 1, 0, 0);
-      pca9685.setPWM(channel + 7, 0, pwm_on);
-    }
+  if (i == 0) {
+    pca9685.setPWM(channel - 1, 0, 0);
+    pca9685.setPWM(channel + 7, 0, 0);
+  } else if (i > 0) {
+    pca9685.setPWM(channel + 7, 0, 0);
+    pca9685.setPWM(channel - 1, 0, pwm_on);
+  } else if (i < 0) {
+    pca9685.setPWM(channel - 1, 0, 0);
+    pca9685.setPWM(channel + 7, 0, pwm_on);
+  }
 }
 
 void checkDriveDelay() {
@@ -302,9 +302,9 @@ void sendMessage(String title, String body)
   FirebaseJson payload;    //all data key-values should be string
   payload.add("D", "excavator" );
   msg.payloads.data = payload.raw();
-  if (Firebase.FCM.send(&stream, &msg)) //send message to recipient
-    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&stream).c_str());
-  else {
+  if (Firebase.FCM.send(&stream, &msg)) {//send message to recipient
+    //    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&stream).c_str());
+  } else {
     Serial.println("Cloud messaging failed");
     Serial.println(stream.errorReason());
   }
