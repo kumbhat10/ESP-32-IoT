@@ -73,16 +73,16 @@ print( bc.WARNING + '\nmd5 checksum of previous firmware ' + last_firmware_name 
 print( bc.OKGREEN + '\nmd5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum+ bc.ENDC)
 
 if (last_firmware_checksum == current_firmware_checksum):
-    print( bc.FAIL + "Both the firmware have same checksum " + current_firmware_checksum + bc.ENDC)
+    print( bc.FAIL + bc.BOLD +"Both the firmware have same checksum " + current_firmware_checksum + bc.ENDC)
 else:
-    print( bc.OKGREEN + "Both the firmware have different checksum " + current_firmware_checksum + bc.ENDC)
+    print( bc.OKGREEN  + bc.BOLD + "Both the firmware have different checksum " + current_firmware_checksum + bc.ENDC)
 
 def upload_to_cloud():
     storage_client = storage.Client.from_service_account_json(keypath)
     bucket = storage_client.bucket('ttl-iot.appspot.com')
     blob = bucket.blob(current_firmware_file_name)
     blob.upload_from_filename(raw_bin_file_path)
-    print(bc.OKGREEN + "File {} uploaded to {}.".format(raw_bin_file_path, current_firmware_file_name)  + bc.ENDC)
+    print(bc.OKGREEN + "New firmware uploaded to {}.".format(current_firmware_file_name)  + bc.ENDC)
 upload_to_cloud()
 
 # ref = db.reference('Excavator/Firmware')
