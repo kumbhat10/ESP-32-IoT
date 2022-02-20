@@ -89,9 +89,9 @@ upload_to_cloud()
 env_file = os.getenv('GITHUB_ENV')
 env_dict = {'last_firmware_name': last_firmware_name, 'current_firmware_checksum': current_firmware_checksum, 'current_firmware_name': current_firmware_name}
 print(env_dict)
-for key in env_dict:
-  with open(env_file, "a") as myfile:
-      myfile.write( key +  '=' + env_dict[key] + '\n')
+with open(env_file, "a") as myfile:
+    for key in env_dict:
+        myfile.write( key +  '=' + env_dict[key] + '\n')
 
 # ref = db.reference('Excavator/Firmware')
 # print("\nWriting to Firebase")
