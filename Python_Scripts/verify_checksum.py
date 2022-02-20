@@ -72,9 +72,9 @@ doc_ref = doc_ref_firmware.document(current_firmware_name).set(event_context_jso
 print( bc.WARNING + '\nmd5 checksum of previous firmware ' + last_firmware_name + ' : ' + last_firmware_checksum+ bc.ENDC)
 print( bc.OKGREEN + '\nmd5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum+ bc.ENDC)
 
-if(last_firmware_checksum == current_firmware_checksum):
+if (last_firmware_checksum == current_firmware_checksum):
     print( bc.FAIL + "Both the firmware have same checksum " + current_firmware_checksum + bc.ENDC)
-elif:
+else:
     print( bc.OKGREEN + "Both the firmware have different checksum " + current_firmware_checksum + bc.ENDC)
 
 def upload_to_cloud():
