@@ -14,7 +14,7 @@ class bc:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-
+print("My Python Script")
 workspace = os.environ.get("GITHUB_WORKSPACE")
 event_context_string = os.environ.get("EVENT_CONTEXT")
 
