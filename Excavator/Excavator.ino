@@ -1,5 +1,4 @@
 #include <WiFi.h>
-#define FirmwareVersion 1.1
 #include "HardwareSerial.h"
 #include "time.h"
 #include <Firebase_ESP_Client.h>
