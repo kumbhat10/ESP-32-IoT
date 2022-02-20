@@ -291,7 +291,7 @@ void streamTimeoutCallback(bool timeout)
 
 void sendMessage(String title, String body)
 {
-  Serial.println("Send Firebase Cloud Messaging... ");
+  //Serial.println("Send Firebase Cloud Messaging... ");
   //Read more details about HTTP v1 API here https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
   FCM_Legacy_HTTP_Message msg;
   msg.targets.to = "/topics/Alert";
