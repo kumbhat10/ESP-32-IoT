@@ -1,11 +1,6 @@
 name: learn-github-actions
 on: [push]
-jobs:
-  Write-to-Firebase-Database:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2          
-           
+jobs:      
 
   Firmware-Software-Build:
     runs-on: ubuntu-latest
