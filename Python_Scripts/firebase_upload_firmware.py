@@ -10,7 +10,7 @@ from google.cloud import storage
 bucket_name = 'ttl-iot.appspot.com'
 source_file_name = sys.argv[1]
 commit_timestamp = parser.parse(os.environ.get(COMMIT_TIMESTAMP)).strftime("%Y%m%d_%H%M%S")
-destination_blob_name = 'Firmware_' + commit_timestamp
+destination_blob_name = 'Firmware_' + commit_timestamp + '10'
 
 ## Function to send mobile cloud notification to all the users
 def sendCloudNotification():

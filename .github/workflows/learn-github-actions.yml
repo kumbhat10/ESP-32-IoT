@@ -22,20 +22,14 @@ jobs:
         run: |
           gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Private-key.json firebase-key.json.gpg     
         env:
-            GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
-      
-      - name: Set commit date time - Python function
-        run: python Python_Scripts/firebase_upload_firmware.py "Excavator/Excavator.ino" "new2.bin"            
+            GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}          
             
       - name: Upgrade pip and install Firebase Admin SDK
         run: python -m pip install --upgrade pip
              pip install --upgrade firebase_admin                      
       
       - name: Firebase - Python function
-        run: python Python_Scripts/firebase_write.py
-
-      - name: Upload firmware - Python function
-        run: python Python_Scripts/firebase_upload_firmware.py "Excavator/Excavator.ino" "new2.bin"       
+        run: python Python_Scripts/firebase_write.py     
         
 
   Firmware-Software-Build:
@@ -81,7 +75,9 @@ jobs:
       - name: Compile & build binary firmware file
         run: |
           arduino-cli compile --fqbn esp32:esp32:esp32 -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080 --verbose
-          
+
+      - name: Upload new firmware - Python function
+        run: python Python_Scripts/firebase_upload_firmware.py $GITHUB_WORKSPACE/Excavator/build/esp32.esp32.esp32/Excavator.ino.bin            
 
   # Arduino-compile-sketches:
     # runs-on: ubuntu-latest
