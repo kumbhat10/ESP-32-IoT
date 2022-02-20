@@ -43,7 +43,8 @@ jobs:
     steps:
       - name: Checkout Github Repository
         uses: actions/checkout@v2      
-        env:
+ 
+      - env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: |
           echo $EVENT_CONTEXT 
