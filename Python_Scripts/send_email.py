@@ -10,8 +10,8 @@ yagmail.register(sender_email, password)
 yag = yagmail.SMTP(sender_email)
 to = [receiver_email, "dushyant.kumbhat@tatatechnologies.com"]
 
-subject = 'Email from Python Testing'
-body = 'This is obviously the body'
+subject = 'Github CI-CD Actions - Successfull '
+body = 'Successfully build new firmware and uploaded to google cloud. Please check below link'
 html = '<a href="https://pypi.python.org/pypi/sky/">Click me!</a>'
 img = 'https://i.pinimg.com/564x/88/19/4a/88194a590eb82d70365f9887aa1091ee.jpg'
 

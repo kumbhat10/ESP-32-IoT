@@ -10,7 +10,7 @@ from dateutil import parser
 
 bucket_name = 'ttl-iot.appspot.com'
 source_file_name = sys.argv[1]
-commit_timestamp = parser.parse(os.environ.get(COMMIT_TIMESTAMP)).strftime("%Y%m%d_%H%M%S")
+commit_timestamp = parser.parse(os.environ.get("COMMIT_TIMESTAMP")).strftime("%Y%m%d_%H%M%S")
 destination_blob_name = 'Firmware_' + commit_timestamp + '10'
 
 ## Function to send mobile cloud notification to all the users
@@ -28,7 +28,7 @@ def sendCloudNotification():
     
 
 workspace = os.environ.get("GITHUB_WORKSPACE")
-filename = 'Private-key.json'
+filename = 'Python_Scripts/Private-key.json'
 keypath = os.path.join(workspace, filename)
 
 storage_client = storage.Client.from_service_account_json(keypath)
