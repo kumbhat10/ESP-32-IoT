@@ -73,10 +73,10 @@ print( bc.WARNING + '\nmd5 checksum of previous firmware ' + last_firmware_name 
 print( bc.OKGREEN +   'md5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum + bc.ENDC)
 
 if (last_firmware_checksum == current_firmware_checksum):
-    deploy = FALSE
+    deploy = False
     print( bc.FAIL + bc.BOLD +"\nBoth S/W have same checksum " + current_firmware_checksum + bc.ENDC)
 else:
-    deploy = TRUE
+    deploy = True
     print( bc.OKGREEN  + bc.BOLD + "\nBoth S/W have different checksum " + current_firmware_checksum + bc.ENDC)
 
 def upload_to_cloud():
