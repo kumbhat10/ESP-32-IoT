@@ -1,6 +1,8 @@
 import yagmail
 import os
 import zipfile
+from keyring import get_keyring
+get_keyring()
 
 sender_email = "tatatechnologiesdk@gmail.com"
 receiver_email = "kumbhat10@gmail.com"
