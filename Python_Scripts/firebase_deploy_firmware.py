@@ -37,7 +37,6 @@ def firebase_login():
     else:
       print(bc.WARNING + '\nGoogle Firebase - Initialized Successfully\n'+ bc.ENDC)
 firebase_login()
-
 print( bc.OKGREEN + "\nWriting to Firebase"+ bc.ENDC)
 ref = db.reference('Excavator/Control/data/Firmware')
 ref.set(current_firmware_name)
