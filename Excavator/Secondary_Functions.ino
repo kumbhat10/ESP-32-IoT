@@ -302,11 +302,11 @@ void sendMessage(String title, String body)
   FirebaseJson payload;    //all data key-values should be string
   payload.add("D", "excavator" );
   msg.payloads.data = payload.raw();
-  if (Firebase.FCM.send(&stream, &msg)) {//send message to recipient
-    //    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&stream).c_str());
+  if (Firebase.FCM.send(&fbdo1, &msg)) {//send message to recipient
+    //    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo1).c_str());
   } else {
     Serial.println("Cloud messaging failed");
-    Serial.println(stream.errorReason());
+    Serial.println(fbdo1.errorReason());
   }
 }
 

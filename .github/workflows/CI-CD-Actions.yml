@@ -2,7 +2,7 @@ name: learn-github-actions
 on: [push]
 jobs:
 
-  Build-Software-ESP32-New:
+  Build-Software-ESP32-CI-CD:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Github Repository
@@ -77,7 +77,7 @@ jobs:
 
       - name: Checksum validation, Determine new Firmware version, Upload Firmware to cloud
         run: |
-          python Python_Scripts/verify_checksum.py          
+          python Python_Scripts/verify_checksum.py
         id: checksum
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
