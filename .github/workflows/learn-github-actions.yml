@@ -80,7 +80,7 @@ jobs:
       
       - name: Compile & build binary firmware file
         run: |
-          arduino-cli compile --fqbn esp32:esp32:esp32 -e --library $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080 --verbose
+          arduino-cli compile --fqbn esp32:esp32:esp32 -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080 --verbose
           
 
   # Arduino-compile-sketches:
