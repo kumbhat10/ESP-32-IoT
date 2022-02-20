@@ -35,13 +35,13 @@ jobs:
       - name: Install Firebase Admin SDK python libraries
         run: pip install --upgrade firebase_admin
 
-      - name: Decrypt credentials GPG file - Google Cloud service account
+      - name: Decrypt credentials for Google Cloud service account - GNU Privacy Guard
         run: |
           gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Python_Scripts/Private-key.json Python_Scripts/firebase-key.json.gpg
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 
-      - name: Decrypt credentials GPG file - for ESP32 - Wifi, Cloud messaging, Storage bucket
+      - name: Decrypt credentials for ESP32 - Wifi, Cloud messaging, Storage bucket - GNU Privacy Guard
         run: |
           gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h Excavator/firebase-key-excavator.gpg
         env:
@@ -50,7 +50,7 @@ jobs:
       - name: Setup s/w build - Arduino CLI framework
         uses: arduino/setup-arduino-cli@v1
 
-      - name: Setup build ENVIRONMENT and CONFIGURATION file
+      - name: Setup build ENVIRONMENT and CONFIG file
         run: |
           arduino-cli config init
           arduino-cli config set sketch.always_export_binaries true
@@ -70,11 +70,11 @@ jobs:
           arduino-cli lib install "Adafruit PWM Servo Driver Library"
           arduino-cli lib install "movingAvg"
 
-      - name: Compile & build S/W firmware file
+      - name: Compile .C code & build S/W firmware file
         run: |
           arduino-cli compile --fqbn esp32:esp32:esp32 -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
 
-      - name: Checksum validation & Firmware naming
+      - name: Checksum validation, Determine new Firmware version, Upload Firmware to cloud
         run: python Python_Scripts/verify_checksum.py
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
