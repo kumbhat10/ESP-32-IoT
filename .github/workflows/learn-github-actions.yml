@@ -73,11 +73,14 @@ jobs:
           arduino-cli lib install "Adafruit PWM Servo Driver Library" 
           arduino-cli lib install "movingAvg"
       
-      - name: Compile & build binary firmware file
+      - name: Compile & build S/W firmware file
         run: |
           arduino-cli compile --fqbn esp32:esp32:esp32 -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080 --verbose
 
-      - name: Upload newly build s/w firmware to google cloud - Python function
+      - name: Calculate Checksum & Verify with previous firmware
+        run: python Python_Scripts/verify_checksum.py
+
+      - name: Upload newly build S/W firmware to google cloud - Python function
         run: |
           python Python_Scripts/firebase_upload_firmware.py           
         env:
@@ -85,10 +88,18 @@ jobs:
           COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
           COMMIT_MESSAGE: ${{ github.event.commits[0].message }} 
           
-      - name: Send Email & Cloud notification to all the users - Python function
+      - name: Deploy new S/W firmware to ESP32 Excavator - Python function
         run: |
-          python Python_Scripts/send_email.py           
+          python Python_Scripts/firebase_deploy_firmware.py           
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
           COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
           COMMIT_MESSAGE: ${{ github.event.commits[0].message }}           
+          
+      # - name: Send Email & Cloud notification to all the users - Python function
+        # run: |
+          # python Python_Scripts/send_email.py           
+        # env:
+          # EVENT_CONTEXT: ${{ toJSON(github.event) }}
+          # COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
+          # COMMIT_MESSAGE: ${{ github.event.commits[0].message }}           
