@@ -79,7 +79,11 @@ jobs:
 
       - name: Calculate Checksum & Verify with previous firmware
         run: python Python_Scripts/verify_checksum.py
-
+        env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+          COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
+          COMMIT_MESSAGE: ${{ github.event.commits[0].message }} 
+          
       - name: Upload newly build S/W firmware to google cloud - Python function
         run: |
           python Python_Scripts/firebase_upload_firmware.py           
