@@ -22,9 +22,9 @@ commit_date = parser.parse(os.environ.get("COMMIT_TIMESTAMP")).strftime("%Y%m%d"
 def file_as_bytes(file):
     with file:
         return file.read()
-def checksum(bin_file_path):
-    return hashlib.md5(file_as_bytes(open(bin_file_path, 'rb'))).hexdigest()
-checksum = 'w3r3wc3rc443r34rc344r344c' #checksum(bin_file_path)
+def checksum(file_path):
+    return hashlib.md5(file_as_bytes(open(file_path, 'rb'))).hexdigest()
+checksum = checksum(raw_bin_file_path)
 def firebase_login():
     try:
       firebase_admin.initialize_app(cred, {
@@ -58,8 +58,6 @@ event_context_json['_firmware_checksum'] = checksum
 event_context_json['_firmware_date'] = int(commit_date)
 event_context_json['_firmware_time'] = int(commit_time)
 doc_ref = doc_ref_firmware.document(current_firmware_name).set(event_context_json)
-
-# filepath = "C:/Users/kumbh/Documents/Arduino/GIT Repo/ESP-32-IoT-Excavator/Excavator/firmware_20220219_134302_6.bin"
 
 # print("   ")
 # print("md5 checksum of new firmware   ")
