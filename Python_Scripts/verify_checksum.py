@@ -2,7 +2,7 @@ import hashlib
 import os
 import json
 import firebase_admin
-from firebase_admin import credentials, db, firestore
+from firebase_admin import credentials, db, firestore, messaging
 from google.cloud import storage
 from dateutil import parser
 class bc:
@@ -84,6 +84,19 @@ def upload_to_cloud():
     blob.upload_from_filename(raw_bin_file_path)
     print(bc.OKGREEN + "New firmware uploaded to {}.".format(current_firmware_file_name)  + bc.ENDC)
 upload_to_cloud()
+
+def sendCloudNotification():
+    topic = 'Alert'
+    message = messaging.Message(
+    topic=topic, android=messaging.AndroidConfig(priority='high',
+                                        data = {'Topic':'332'},
+            notification=messaging.AndroidNotification(
+                title='Firmware Uploaded',
+                body='Github actions successfully uploaded new firmware on '+ parser.parse(os.environ.get("COMMIT_TIMESTAMP")).strftime("%d/%m/%Y at %H:%M:%S"),
+                image="https://i.pinimg.com/564x/92/fb/38/92fb38bd608b0647cbc7b33270f86e56.jpg")))
+    response = messaging.send(message) # Response is a message ID string.
+    print('\nSuccessfully sent cloud notification :', response)
+sendCloudNotification()
 
 ## Save to environment
 env_file = os.getenv('GITHUB_ENV')

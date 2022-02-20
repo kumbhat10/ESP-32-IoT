@@ -17,25 +17,27 @@ class bc:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-
+current_firmware_name = = os.environ.get("FIRMWARE_NAME")
 workspace = os.environ.get("GITHUB_WORKSPACE")
 commit_timestamp = parser.parse(os.environ.get("COMMIT_TIMESTAMP")).strftime("%Y%m%d_%H%M%S")
-current_firmware_name = 'Firmware_' + commit_timestamp + '_10'
+
 filename = 'Python_Scripts/Private-key.json'
 keypath = os.path.join(workspace, filename)
 cred = firebase_admin.credentials.Certificate(keypath)
-try:
-  firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://ttl-iot-default-rtdb.europe-west1.firebasedatabase.app'
-})
-except ValueError:
-  print('\nFirebase - Already initialized')
-except:
-  print('\nFirebase - Error occured')
-else:
-  print('\nFirebase - Initialized Successfully')
+
+def firebase_login():
+    try:
+      firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://ttl-iot-default-rtdb.europe-west1.firebasedatabase.app'
+    })
+    except ValueError:
+      print( bc.OKGREEN +'\nGoogle Firebase - Already initialized\n' + bc.ENDC)
+    except:
+      print(bc.FAIL + '\nGoogle Firebase - Error occured\n'+ bc.ENDC)
+    else:
+      print(bc.WARNING + '\nGoogle Firebase - Initialized Successfully\n'+ bc.ENDC)
+firebase_login()
 
 ref = db.reference('Excavator/Control/data/Firmware')
-print("\nWriting to Firebase")
+print( bc.OKGREEN + "\nWriting to Firebase"+ bc.ENDC)
 ref.set(current_firmware_name)
-print(current_firmware_name)
