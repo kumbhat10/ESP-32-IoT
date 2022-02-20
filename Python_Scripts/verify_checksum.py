@@ -2,7 +2,7 @@ import hashlib
 import os
 import json
 import firebase_admin
-from firebase_admin import credentials, db, messaging
+from firebase_admin import credentials, db, messaging, firestore
 from google.cloud import storage
 from dateutil import parser
 

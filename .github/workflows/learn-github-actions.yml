@@ -38,17 +38,17 @@ jobs:
       # - name: Firebase - Python function
         # run: python Python_Scripts/firebase_write.py
 
-      - name: Decrypt confidential credentials GPG file - Google cloud service account
+      - name: Decrypt credentials GPG file - Google Cloud service account
         run: |
           gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Python_Scripts/Private-key.json Python_Scripts/firebase-key.json.gpg
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 
-      - name: Decrypt confidential credentials GPG file - Wifi, Cloud messaging, Storage bucket
-        run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h Excavator/firebase-key-excavator.gpg
-        env:
-            GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
+      # - name: Decrypt credentials GPG file - for ESP32 - Wifi, Cloud messaging, Storage bucket
+      #   run: |
+      #     gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h Excavator/firebase-key-excavator.gpg
+      #   env:
+      #       GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 
       # - name: Setup s/w build - Arduino CLI framework
       #   uses: arduino/setup-arduino-cli@v1
