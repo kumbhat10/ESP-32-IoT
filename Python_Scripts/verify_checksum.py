@@ -24,7 +24,7 @@ def file_as_bytes(file):
         return file.read()
 def checksum(file_path):
     return hashlib.md5(file_as_bytes(open(file_path, 'rb'))).hexdigest()
-checksum = checksum(raw_bin_file_path)
+current_firmware_checksum = checksum(raw_bin_file_path)
 def firebase_login():
     try:
       firebase_admin.initialize_app(cred, {
@@ -54,14 +54,14 @@ current_firmware_version = int(last_firmware_version) + 1;
 current_firmware_name = 'Firmware_' + commit_timestamp + '_' + str(current_firmware_version)
 
 event_context_json['_firmware_version'] = current_firmware_version
-event_context_json['_firmware_checksum'] = checksum
+event_context_json['_firmware_checksum'] = current_firmware_checksum
 event_context_json['_firmware_date'] = int(commit_date)
 event_context_json['_firmware_time'] = int(commit_time)
 doc_ref = doc_ref_firmware.document(current_firmware_name).set(event_context_json)
 
-# print("   ")
-# print("md5 checksum of new firmware   ")
-# print(checksum)
+print("   ")
+print("md5 checksum of new firmware   ")
+print(current_firmware_checksum)
 #
 # ref = db.reference('Excavator/Firmware')
 # print("\nWriting to Firebase")
