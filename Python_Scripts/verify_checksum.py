@@ -62,8 +62,8 @@ doc_ref = doc_ref_firmware.document(current_firmware_name).set(event_context_jso
 
 print('\nmd5 checksum of previous firmware ' + last_firmware_name + ' : ' + last_firmware_checksum)
 print('\nmd5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum)
- if(last_firmware_checksum == current_firmware_checksum):
-     print("Both the firmware have same checksum " + current_firmware_checksum)
+if(last_firmware_checksum == current_firmware_checksum):
+    print("Both the firmware have same checksum " + current_firmware_checksum)
 def upload_to_cloud():
     storage_client = storage.Client.from_service_account_json(keypath)
     bucket = storage_client.bucket('ttl-iot.appspot.com')
