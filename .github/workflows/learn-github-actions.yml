@@ -50,7 +50,7 @@ jobs:
       - name: Setup S/W build - Arduino CLI framework
         uses: arduino/setup-arduino-cli@v1
 
-      - name: Setup build ENVIRONMENT and CONFIG file
+      - name: Setup build Environment and Config file
         run: |
           arduino-cli config init
           arduino-cli config set sketch.always_export_binaries true
@@ -73,6 +73,7 @@ jobs:
       - name: Compile .C code & build S/W firmware
         run: |
           arduino-cli compile --fqbn esp32:esp32:esp32 -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
+        id: build_software
 
       - name: Checksum validation, Determine new Firmware version, Upload Firmware to cloud
         run: |
@@ -87,8 +88,8 @@ jobs:
       - name: Github Syntax - previous step context
         run: echo "${{ steps.checksum.outputs.output2 }}"
 
+      - run: echo ${{ env.firmware }}
 
-      #
       # - name: Deploy new S/W firmware to ESP32 Excavator - Python function
       #   run: |
       #     python Python_Scripts/firebase_deploy_firmware.py

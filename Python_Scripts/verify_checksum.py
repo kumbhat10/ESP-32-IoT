@@ -85,6 +85,9 @@ def upload_to_cloud():
     print(bc.OKGREEN + "New firmware uploaded to {}.".format(current_firmware_file_name)  + bc.ENDC)
 upload_to_cloud()
 
+env_file = os.getenv('GITHUB_ENV')
+with open(env_file, "a") as myfile:
+    myfile.write("firmware="+current_firmware_name)
 
 # ref = db.reference('Excavator/Firmware')
 # print("\nWriting to Firebase")
