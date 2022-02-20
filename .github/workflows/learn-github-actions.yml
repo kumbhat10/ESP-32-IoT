@@ -30,6 +30,7 @@ jobs:
              pip install pyserial --upgrade
              pip install yagmail --upgrade
              pip install keyring --upgrade
+             pip install secretstorage --upgrade
              
       - name: Install Firebase Admin SDK python libraries
         run: pip install --upgrade firebase_admin  

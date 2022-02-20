@@ -4,6 +4,9 @@ import zipfile
 from keyring import get_keyring
 get_keyring()
 
+# keyring.set_password("system", "username", "password")
+# keyring.get_password("system", "username")
+
 sender_email = "tatatechnologiesdk@gmail.com"
 receiver_email = "kumbhat10@gmail.com"
 password = "Kanakrajj10"
