@@ -38,7 +38,7 @@ firebase_login()
 ## get last firmware Version
 f_db = firestore.client()
 doc_ref_firmware = f_db.collection('Firmware')
-doc_ref = doc_ref_firmware.document('destination_blob_name').set(e)
+doc_ref = doc_ref_firmware.document('destination_blob_name').set(event_context)
 
 
 destination_blob_name = 'Firmware_' + commit_timestamp + '_10.bin'
