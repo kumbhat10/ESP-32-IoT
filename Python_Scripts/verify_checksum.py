@@ -31,14 +31,14 @@ def firebase_login():
         'databaseURL': 'https://ttl-iot-default-rtdb.europe-west1.firebasedatabase.app'
     })
     except ValueError:
-      print('\nFirebase - Already initialized')
+      print('\nFirebase - Already initialized\n')
     except:
-      print('\nFirebase - Error occured')
+      print('\nFirebase - Error occured\n')
     else:
-      print('\nFirebase - Initialized Successfully')
+      print('\nFirebase - Initialized Successfully\n')
 firebase_login()
 
-## get last firmware Version
+## Get last firmware Version & CHecksum
 f_db = firestore.client()
 doc_ref_firmware = f_db.collection('Firmware')
 query = doc_ref_firmware.order_by("_firmware_version",  direction=firestore.Query.DESCENDING).limit(1)
@@ -47,12 +47,11 @@ for doc in results:
   document = doc.to_dict()
   last_firmware_version = document['_firmware_version']
   last_firmware_checksum = document['_firmware_checksum']
-print("last_firmware_version :", last_firmware_version)
-print("last_firmware_checksum :", last_firmware_checksum)
+  print("last_firmware_version :", last_firmware_version)
+  print("last_firmware_checksum :", last_firmware_checksum)
 
 current_firmware_version = int(last_firmware_version) + 1;
 current_firmware_name = 'Firmware_' + commit_timestamp + '_' + str(current_firmware_version)
-
 
 event_context_json['_firmware_version'] = current_firmware_version
 event_context_json['_firmware_checksum'] = checksum
