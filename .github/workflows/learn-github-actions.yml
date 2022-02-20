@@ -24,7 +24,7 @@ jobs:
             python-version: '3.10.1' # Version range or exact version of a Python version to use, using SemVer's version range syntax
             architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
 
-      - name: Install Python libraries & upgrade pip
+      - name: Install required Python libraries & upgrade pip
         run: python -m pip install --upgrade pip
              pip install python-dateutil --upgrade
              pip install pyserial --upgrade
@@ -47,7 +47,7 @@ jobs:
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 
-      - name: Setup s/w build - Arduino CLI framework
+      - name: Setup S/W build - Arduino CLI framework
         uses: arduino/setup-arduino-cli@v1
 
       - name: Setup build ENVIRONMENT and CONFIG file
@@ -70,7 +70,7 @@ jobs:
           arduino-cli lib install "Adafruit PWM Servo Driver Library"
           arduino-cli lib install "movingAvg"
 
-      - name: Compile .C code & build S/W firmware file
+      - name: Compile .C code & build S/W firmware
         run: |
           arduino-cli compile --fqbn esp32:esp32:esp32 -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
 

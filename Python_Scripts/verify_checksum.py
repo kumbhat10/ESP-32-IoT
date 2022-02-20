@@ -25,8 +25,6 @@ def file_as_bytes(file):
 def checksum(file_path):
     return hashlib.md5(file_as_bytes(open(file_path, 'rb'))).hexdigest()
 current_firmware_checksum = checksum(raw_bin_file_path)
-print("\nmd5 checksum of new firmware   ")
-print(current_firmware_checksum)
 
 def firebase_login():
     try:
@@ -34,11 +32,11 @@ def firebase_login():
         'databaseURL': 'https://ttl-iot-default-rtdb.europe-west1.firebasedatabase.app'
     })
     except ValueError:
-      print('\nFirebase - Already initialized\n')
+      print('\nGoogle Firebase - Already initialized\n')
     except:
-      print('\nFirebase - Error occured\n')
+      print('\nGoogle Firebase - Error occured\n')
     else:
-      print('\nFirebase - Initialized Successfully\n')
+      print('\nGoogle Firebase - Initialized Successfully\n')
 firebase_login()
 
 ## Get last firmware Version & CHecksum
@@ -48,11 +46,9 @@ query = doc_ref_firmware.order_by("_firmware_version",  direction=firestore.Quer
 results = query.stream()
 for doc in results:
   document = doc.to_dict()
+  last_firmware_name = doc.id
   last_firmware_version = document['_firmware_version']
   last_firmware_checksum = document['_firmware_checksum']
-  print("\nmd5 checksum of previous firmware   ")
-  print(last_firmware_checksum)
-  print("\nlast_firmware_version :", last_firmware_version)
 
 current_firmware_version = int(last_firmware_version) + 1
 current_firmware_name = 'Firmware_' + commit_timestamp + '_' + str(current_firmware_version)
@@ -64,13 +60,17 @@ event_context_json['_firmware_date'] = int(commit_date)
 event_context_json['_firmware_time'] = int(commit_time)
 doc_ref = doc_ref_firmware.document(current_firmware_name).set(event_context_json)
 
+print('\nmd5 checksum of previous firmware ' + last_firmware_name + ' : ' + last_firmware_checksum)
+print('\nmd5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum)
+ if(last_firmware_checksum == current_firmware_checksum):
+     print("Both the firmware have same checksum " + current_firmware_checksum)
 def upload_to_cloud():
     storage_client = storage.Client.from_service_account_json(keypath)
     bucket = storage_client.bucket('ttl-iot.appspot.com')
     blob = bucket.blob(current_firmware_file_name)
     blob.upload_from_filename(raw_bin_file_path)
     print("File {} uploaded to {}.".format(raw_bin_file_path, current_firmware_file_name))
-
+upload_to_cloud()
 
 # ref = db.reference('Excavator/Firmware')
 # print("\nWriting to Firebase")
