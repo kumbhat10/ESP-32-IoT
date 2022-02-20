@@ -51,7 +51,7 @@ print("last_firmware_version :", last_firmware_version)
 print("last_firmware_checksum :", last_firmware_checksum)
 
 current_firmware_version = int(last_firmware_version) + 1;
-current_firmware_name = 'Firmware_' + commit_timestamp + '_' + str(version)
+current_firmware_name = 'Firmware_' + commit_timestamp + '_' + str(current_firmware_version)
 
 
 event_context_json['_firmware_version'] = current_firmware_version
