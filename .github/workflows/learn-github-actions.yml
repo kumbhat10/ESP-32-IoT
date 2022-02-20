@@ -2,7 +2,7 @@ name: learn-github-actions
 on: [push]
 jobs:      
 
-  Build-Software-ESP32:
+  Build-Software-ESP32-New:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Github Repository
