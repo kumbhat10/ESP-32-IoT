@@ -22,7 +22,7 @@ String parentPath = "Excavator/Control/data";
 String childPath[14] = {"/Buzz", "/bs", "/msg", "/AT", "/pwr", "/z1", "/z2", "/z3", "/z4", "/z5", "/z6", "/z7", "/z8", "/Firmware"};
 
 void AllTurnOff() {
-  Serial.println("Turnin All off PWM");
+//  Serial.println("Turnin All off PWM");
   for (int i = 0; i <= 15; i++) {
     pca9685.setPWM(i, 0, 0); // 0-7 all high - directly connected
   }
@@ -45,10 +45,10 @@ void FirebaseInit() {
   }
   buzOnce();
   digitalWrite(LED_BUILTIN, LOW); ledState = true;
-  Serial.println("Sending Cloud message notification...");
+  Serial.println("Sending Cloud notification to user...");
   if (!newFirmwareAnnounce) sendMessage("Excavator is Online! ", "Excavator was restarted");
   buzOnce();
-  Serial.println("Begin streaming");
+  Serial.println("Start firebase streaming");
   if (!Firebase.RTDB.beginMultiPathStream(&stream, parentPath))
     Serial.printf("sream begin error, %s\n\n", stream.errorReason().c_str());
   Firebase.RTDB.setMultiPathStreamCallback(&stream, streamCallback, streamTimeoutCallback);

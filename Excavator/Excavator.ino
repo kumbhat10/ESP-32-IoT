@@ -72,7 +72,7 @@ volatile bool newFirmware = false;
 volatile bool newFirmwareAnnounce = false;
 volatile int firmwareVersion = 0; //EEPROM.read(1); address 1
 volatile int newFirmwareVersion = 0; //EEPROM.read(2); address 2
-String fv_name = ""; 
+String fv_name = "";
 
 HardwareSerial Serial7600(1);
 
@@ -108,18 +108,22 @@ void setup()
   Serial.println();  Serial.println();  Serial.println();
   EEPROM.begin(512);
 
-//  EEPROM.write(1, 1); //remove it - set newFirmwareVersion to 1
-//  EEPROM.write(2, 1); //remove it - set newFirmwareVersion to 1
-//  EEPROM.commit(); //remove it
-  
-  firmwareVersion = EEPROM.read(1); Serial.print("old ver e1 "); Serial.println(EEPROM.read(1));
-  newFirmwareVersion = EEPROM.read(2); Serial.print("old ver e1 "); Serial.println(EEPROM.read(2));
+  //  EEPROM.write(1, 1); //remove it - set newFirmwareVersion to 1
+  //  EEPROM.write(2, 1); //remove it - set newFirmwareVersion to 1
+  //  EEPROM.commit(); //remove it
+
+  firmwareVersion = EEPROM.read(1);
+  newFirmwareVersion = EEPROM.read(2);
+
   if (newFirmwareVersion != firmwareVersion) {
+    Serial.print("Previous Firmware Version : "); Serial.println(firmwareVersion);
+    Serial.print("New Firmware Version : "); Serial.println(newFirmwareVersion);
     firmwareVersion = EEPROM.read(2);
     EEPROM.write(1, newFirmwareVersion);
     EEPROM.commit();
     newFirmwareAnnounce = true;
-    Serial.println("Firmware update successfull : ");
+    Serial.println();
+    Serial.println("Firmware update was successfull : ");
   }
   Serial.print("Current firmware version is : ");  Serial.println(EEPROM.read(1));  Serial.println();
 
@@ -157,11 +161,11 @@ void loop()
   BlinkLED();
   checkDriveDelay();
   PlayBuzzer();
-  if(!newFirmware) bvCheckTask.run();
+  if (!newFirmware) bvCheckTask.run();
   checkDriveDelay();
-  if(!newFirmware) batteryVoltageTask.run();
+  if (!newFirmware) batteryVoltageTask.run();
   checkDriveDelay();
-  if(!newFirmware) localTimeTask.run();
+  if (!newFirmware) localTimeTask.run();
   if (!ATbusy && !newFirmware) gpsUpdateTask.run();
   checkDriveDelay();
 }
