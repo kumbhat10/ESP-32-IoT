@@ -17,7 +17,7 @@ class bc:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-current_firmware_name = = os.environ.get("FIRMWARE_NAME")
+current_firmware_name = os.environ.get("FIRMWARE_NAME")
 workspace = os.environ.get("GITHUB_WORKSPACE")
 commit_timestamp = parser.parse(os.environ.get("COMMIT_TIMESTAMP")).strftime("%Y%m%d_%H%M%S")
 
