@@ -21,7 +21,7 @@ def sendCloudNotification():
                                         data = {'Topic':'332'},
             notification=messaging.AndroidNotification(
                 title='Firmware Uploaded',
-                body='Github actions successfully uploaded new firmware on '+current_time,
+                body='Github actions successfully uploaded new firmware on '+ parser.parse(os.environ.get("COMMIT_TIMESTAMP")).strftime("%Y%m%d at %H:%M:%S"),
                 image="https://i.pinimg.com/564x/92/fb/38/92fb38bd608b0647cbc7b33270f86e56.jpg")))
     response = messaging.send(message) # Response is a message ID string.
     print('\nSuccessfully sent cloud notification :', response)
