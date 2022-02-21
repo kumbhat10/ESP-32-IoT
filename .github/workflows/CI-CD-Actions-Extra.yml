@@ -17,7 +17,7 @@ jobs:
       uses: atlassian/gajira-create@master
       if: failure()
       with:
-        project: Tata Technologies Limited - IoT
+        project: TTL
         issuetype: Build
         summary: Build failed for ${{ github.repository }}
 
