@@ -21,7 +21,7 @@ jobs:
         issuetype: CI-CD-Build
         summary: Build failed for ${{ github.repository }}
         description: |
-          ${{ github.event }}
+          ${{ toJSON(github.event) }}
 
 
 
