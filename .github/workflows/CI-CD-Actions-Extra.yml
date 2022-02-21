@@ -20,6 +20,9 @@ jobs:
         project: TTL
         issuetype: CI-CD-Build
         summary: Build failed for ${{ github.repository }}
+        description: Error while building S/W for esp32
+        fields: ${{ toJSON(github.event) }}
+
 
 
 
