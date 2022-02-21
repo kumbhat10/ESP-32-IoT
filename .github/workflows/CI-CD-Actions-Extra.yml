@@ -1,0 +1,33 @@
+name: learn-github-actions
+on: [push]
+jobs:
+  a-failing-job:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Failing step
+      run: exit 1
+    - name: Login to Jira
+      uses: atlassian/gajira-login@master
+      if: failure()
+      env:
+        JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+    - name: Create Jira issue on job failure
+      uses: atlassian/gajira-create@master
+      if: failure()
+      with:
+        project: GA
+        issuetype: Build
+        summary: Build failed for ${{ github.repository }}
+
+
+
+      #
+      # # - name: Send Email & Cloud notification to all the users - Python function
+        # run: |
+          # python Python_Scripts/send_email.py
+        # env:
+          # EVENT_CONTEXT: ${{ toJSON(github.event) }}
+          # COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
+          # COMMIT_MESSAGE: ${{ github.event.commits[0].message }}

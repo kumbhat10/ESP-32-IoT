@@ -1,7 +1,6 @@
 name: learn-github-actions
 on: [push]
 jobs:
-
   Build-Software-ESP32-CI-CD:
     runs-on: ubuntu-latest
     steps:
