@@ -72,7 +72,7 @@ jobs:
 
       - name: Compile .C code & build S/W firmware
         run: |
-          arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080 --verbose
+          arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
         id: build_software
 
       - name: Checksum validation, Determine new Firmware version, Upload Firmware to cloud
