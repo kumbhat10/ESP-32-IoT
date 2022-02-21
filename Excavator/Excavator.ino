@@ -189,7 +189,7 @@ void CheckATSerial() {
         if (message_pos > 2) {
           if (strncmp(message, "+CGNSSINFO", 10) == 0) {
             if (message_pos > 50 ) writeFirebase(message, "Excavator/Control/GNSS");
-            else Serial.println("Empty message received");
+            //else Serial.println("Empty message received");
           }
           else if (strncmp(message, "+CGPSINFO", 9) == 0) {
             if (message_pos > 50 ) writeFirebase(message, "Excavator/Control/GPS");
