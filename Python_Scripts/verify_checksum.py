@@ -53,12 +53,12 @@ f_db = firestore.client()
 doc_ref_firmware = f_db.collection('Firmware')
 query = doc_ref_firmware.order_by("_firmware_version",  direction=firestore.Query.DESCENDING).limit(1)
 results = query.stream()
+
 for doc in results:
   document = doc.to_dict()
   last_firmware_name = doc.id
   last_firmware_version = document['_firmware_version']
   last_firmware_checksum = document['_firmware_checksum']
-
 current_firmware_version = int(last_firmware_version) + 1
 current_firmware_name = 'Firmware_' + commit_timestamp + '_' + str(current_firmware_version)
 current_firmware_file_name = current_firmware_name + '.bin'
