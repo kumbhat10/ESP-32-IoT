@@ -1,4 +1,4 @@
-name: learn-github-actions
+name: Jira-Actions
 on: [push]
 jobs:
   a-failing-job:
@@ -17,7 +17,7 @@ jobs:
       uses: atlassian/gajira-create@master
       if: failure()
       with:
-        project: GA
+        project: ${{ secrets.JIRA_PROJECT }}
         issuetype: Build
         summary: Build failed for ${{ github.repository }}
 

@@ -1,99 +1,90 @@
-name: learn-github-actions
-on: [push]
-jobs:
-  Build-Software-ESP32-CI-CD:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Github Repository
-        uses: actions/checkout@v2
-
-      - name: Setup global constants & environment variables
-        env:
-          EVENT_CONTEXT: ${{ toJSON(github.event) }}
-          COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
-          COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
-        run: |
-          echo $EVENT_CONTEXT
-          echo $COMMIT_TIMESTAMP
-          echo $COMMIT_MESSAGE
-
-      - name: Setup Python 3.10.1
-        uses: actions/setup-python@v2
-        with:
-            python-version: '3.10.1' # Version range or exact version of a Python version to use, using SemVer's version range syntax
-            architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-
-      - name: Install required Python libraries & upgrade pip
-        run: python -m pip install --upgrade pip
-             pip install python-dateutil --upgrade
-             pip install pyserial --upgrade
-             pip install yagmail --upgrade
-             pip install keyring --upgrade
-             pip install secretstorage --upgrade
-
-      - name: Install Firebase Admin SDK python libraries
-        run: pip install --upgrade firebase_admin
-
-      - name: Decrypt credentials for Google Cloud service account - GNU Privacy Guard
-        run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Python_Scripts/Private-key.json Python_Scripts/firebase-key.json.gpg
-        env:
-            GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
-
-      - name: Decrypt credentials for ESP32 - Wifi, Cloud messaging, Storage bucket - GNU Privacy Guard
-        run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h Excavator/firebase-key-excavator.gpg
-        env:
-            GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
-
-      - name: Setup S/W build - Arduino CLI framework
-        uses: arduino/setup-arduino-cli@v1
-
-      - name: Setup build Environment and Config file
-        run: |
-          arduino-cli config init
-          arduino-cli config set sketch.always_export_binaries true
-
-      - name: ESP32 - Update core and download libraries ESP32 modules & boards
-        run: |
-          arduino-cli config set board_manager.additional_urls https://dl.espressif.com/dl/package_esp32_index.json
-          arduino-cli core update-index
-          arduino-cli core install esp32:esp32
-
-      - name: Google's Firebase - Download & Install library for ESP32
-        run: |
-          arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32"
-
-      - name: Adafruit PWM Servo Driver - Download & Install library
-        run: |
-          arduino-cli lib install "Adafruit PWM Servo Driver Library"
-          arduino-cli lib install "movingAvg"
-
-      - name: Compile .C code & build S/W firmware
-        run: |
-          arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
-        id: build_software
-
-      - name: Checksum validation, Determine new Firmware version, Upload Firmware to cloud
-        run: |
-          python Python_Scripts/verify_checksum.py
-        id: checksum
-        env:
-          EVENT_CONTEXT: ${{ toJSON(github.event) }}
-          COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
-          COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
-
-      - name: Deploy new S/W to Excavator
-        run: |
-          python Python_Scripts/firebase_deploy_firmware.py
-        env:
-          EVENT_CONTEXT: ${{ toJSON(github.event) }}
-
-      #
-      # # - name: Send Email & Cloud notification to all the users - Python function
-        # run: |
-          # python Python_Scripts/send_email.py
-        # env:
-          # EVENT_CONTEXT: ${{ toJSON(github.event) }}
-          # COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
-          # COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
+# name: CICD-Actions
+# on: [push]
+# jobs:
+#   Build-Software-ESP32-CI-CD:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Github Repository
+#         uses: actions/checkout@v2
+#
+#       - name: Setup global constants & environment variables
+#         env:
+#           EVENT_CONTEXT: ${{ toJSON(github.event) }}
+#           COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
+#           COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
+#         run: |
+#           echo $EVENT_CONTEXT
+#           echo $COMMIT_TIMESTAMP
+#           echo $COMMIT_MESSAGE
+#
+#       - name: Setup Python 3.10.1
+#         uses: actions/setup-python@v2
+#         with:
+#             python-version: '3.10.1' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+#             architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+#
+#       - name: Install required Python libraries & upgrade pip
+#         run: python -m pip install --upgrade pip
+#              pip install python-dateutil --upgrade
+#              pip install pyserial --upgrade
+#              pip install yagmail --upgrade
+#              pip install keyring --upgrade
+#              pip install secretstorage --upgrade
+#
+#       - name: Install Firebase Admin SDK python libraries
+#         run: pip install --upgrade firebase_admin
+#
+#       - name: Decrypt credentials for Google Cloud service account - GNU Privacy Guard
+#         run: |
+#           gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Python_Scripts/Private-key.json Python_Scripts/firebase-key.json.gpg
+#         env:
+#             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
+#
+#       - name: Decrypt credentials for ESP32 - Wifi, Cloud messaging, Storage bucket - GNU Privacy Guard
+#         run: |
+#           gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h Excavator/firebase-key-excavator.gpg
+#         env:
+#             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
+#
+#       - name: Setup S/W build - Arduino CLI framework
+#         uses: arduino/setup-arduino-cli@v1
+#
+#       - name: Setup build Environment and Config file
+#         run: |
+#           arduino-cli config init
+#           arduino-cli config set sketch.always_export_binaries true
+#
+#       - name: ESP32 - Update core and download libraries ESP32 modules & boards
+#         run: |
+#           arduino-cli config set board_manager.additional_urls https://dl.espressif.com/dl/package_esp32_index.json
+#           arduino-cli core update-index
+#           arduino-cli core install esp32:esp32
+#
+#       - name: Google's Firebase - Download & Install library for ESP32
+#         run: |
+#           arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32"
+#
+#       - name: Adafruit PWM Servo Driver - Download & Install library
+#         run: |
+#           arduino-cli lib install "Adafruit PWM Servo Driver Library"
+#           arduino-cli lib install "movingAvg"
+#
+#       - name: Compile .C code & build S/W firmware
+#         run: |
+#           arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
+#         id: build_software
+#
+#       - name: Checksum validation, Determine new Firmware version, Upload Firmware to cloud
+#         run: |
+#           python Python_Scripts/verify_checksum.py
+#         id: checksum
+#         env:
+#           EVENT_CONTEXT: ${{ toJSON(github.event) }}
+#           COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
+#           COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
+#
+#       - name: Deploy new S/W to Excavator
+#         run: |
+#           python Python_Scripts/firebase_deploy_firmware.py
+#         env:
+#           EVENT_CONTEXT: ${{ toJSON(github.event) }}
