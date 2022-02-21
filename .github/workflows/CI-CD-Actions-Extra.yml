@@ -18,7 +18,7 @@ jobs:
       if: failure()
       with:
         project: TTL
-        issuetype: Build
+        issuetype: CI-CD-Build
         summary: Build failed for ${{ github.repository }}
 
 
