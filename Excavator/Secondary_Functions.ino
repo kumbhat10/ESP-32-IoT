@@ -327,7 +327,7 @@ void writeFirebase(String message, String path) {
   json.add("M", message );
   json.add("D", date2 );
   json.add("T", time1 );
-  Firebase.RTDB.setJSONAsync(&fbdo, path, &json);
+//  Firebase.RTDB.setJSONAsync(&fbdo, path, &json);
   //  Firebase.RTDB.setIntAsync(&fbdo, "/test/int", millis());
 }
 
@@ -355,7 +355,7 @@ void ReportVoltage() {
   json.add("i_adc_V", bv / BVSlope );
   json.add("D", date2 );
   json.add("T", time1 );
-  Firebase.RTDB.setJSONAsync(&fbdo, "Excavator/BatteryVoltage", &json);
+//  Firebase.RTDB.setJSONAsync(&fbdo, "Excavator/BatteryVoltage", &json);
   //  Firebase.RTDB.setIntAsync(&fbdo, "/test/int", millis());
 }
 

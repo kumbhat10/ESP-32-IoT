@@ -4,4 +4,5 @@ firebase-adminsdk-key*
 *credentials*
 Excavator/credentials*
 Excavator/*.bin
+Excavator/build*
 *.bin
