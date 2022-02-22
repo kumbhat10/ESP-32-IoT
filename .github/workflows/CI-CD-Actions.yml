@@ -36,13 +36,15 @@ jobs:
 
       - name: Decrypt credentials for Google Cloud service account - GNU Privacy Guard
         run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Python_Scripts/Private-key.json $GITHUB_WORKSPACE/Python_Scripts/firebase-key.json.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE\Python_Scripts\Private-key.json $GITHUB_WORKSPACE\Python_Scripts\firebase-key.json.gpg
+        #gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Python_Scripts/Private-key.json $GITHUB_WORKSPACE/Python_Scripts/firebase-key.json.gpg
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 
       - name: Decrypt credentials for ESP32 - Wifi, Cloud messaging, Storage bucket - GNU Privacy Guard
         run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h $GITHUB_WORKSPACE/Excavator/firebase-key-excavator.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE\Excavator\credentials.h $GITHUB_WORKSPACE\Excavator\firebase-key-excavator.gpg
+        #gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h $GITHUB_WORKSPACE/Excavator/firebase-key-excavator.gpg
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 
