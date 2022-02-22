@@ -73,12 +73,14 @@ jobs:
 
       - name: Compile .C code & build S/W firmware
         run: |
-          arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
+          arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $env:GITHUB_WORKSPACE\Excavator\Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
+        #arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
         id: build_software
 
       - name: Checksum validation, Determine new Firmware version, Upload Firmware to cloud
         run: |
-          python Python_Scripts/verify_checksum.py
+          python  $env:GITHUB_WORKSPACE\Python_Scripts\verify_checksum.py
+        #python Python_Scripts/verify_checksum.py
         id: checksum
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
@@ -87,7 +89,8 @@ jobs:
 
       - name: Deploy new S/W to Excavator
         run: |
-          python $GITHUB_WORKSPACE/Python_Scripts/firebase_deploy_firmware.py
+          python $env:GITHUB_WORKSPACE\Python_Scripts\firebase_deploy_firmware.py
+        # python $GITHUB_WORKSPACE/Python_Scripts/firebase_deploy_firmware.py
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
 
