@@ -2,7 +2,7 @@ name: CICD-Actions
 on: [push]
 jobs:
   Build-Software-ESP32-CI-CD:
-    runs-on: ununtu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Github Repository
         uses: actions/checkout@v2
@@ -71,7 +71,7 @@ jobs:
 
       - name: Compile .C code & build S/W firmware
         run: |
-          arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
+          arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080 --verbose
         id: build_software
 
       - name: Checksum validation, Determine new Firmware version, Upload Firmware to cloud
