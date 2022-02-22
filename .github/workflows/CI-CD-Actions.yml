@@ -2,7 +2,7 @@ name: CICD-Actions
 on: [push]
 jobs:
   Build-Software-ESP32-CI-CD:
-    runs-on: ubuntu-latest
+    runs-on: windows-2022
     steps:
       - name: Checkout Github Repository
         uses: actions/checkout@v2
@@ -51,7 +51,7 @@ jobs:
 
       - name: Setup build Environment and Config file
         run: |
-          arduino-cli configaa init
+          arduino-cli config init
           arduino-cli config set sketch.always_export_binaries true
 
       - name: ESP32 - Update core and download libraries ESP32 modules & boards
