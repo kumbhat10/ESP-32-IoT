@@ -2,7 +2,7 @@ name: CICD-Actions
 on: [push]
 jobs:
   Build-Software-ESP32-CI-CD:
-    runs-on: windows-2022
+    runs-on: ununtu-latest
     steps:
       - name: Checkout Github Repository
         uses: actions/checkout@v2
@@ -36,15 +36,13 @@ jobs:
 
       - name: Decrypt credentials for Google Cloud service account - GNU Privacy Guard
         run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $env:GITHUB_WORKSPACE\Python_Scripts\Private-key.json $env:GITHUB_WORKSPACE\Python_Scripts\firebase-key.json.gpg
-        #gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Python_Scripts/Private-key.json $GITHUB_WORKSPACE/Python_Scripts/firebase-key.json.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Python_Scripts/Private-key.json $GITHUB_WORKSPACE/Python_Scripts/firebase-key.json.gpg
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 
       - name: Decrypt credentials for ESP32 - Wifi, Cloud messaging, Storage bucket - GNU Privacy Guard
         run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $env:GITHUB_WORKSPACE\Excavator\credentials.h $env:GITHUB_WORKSPACE\Excavator\firebase-key-excavator.gpg
-        #gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h $GITHUB_WORKSPACE/Excavator/firebase-key-excavator.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h $GITHUB_WORKSPACE/Excavator/firebase-key-excavator.gpg
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 
@@ -73,14 +71,12 @@ jobs:
 
       - name: Compile .C code & build S/W firmware
         run: |
-          arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $env:GITHUB_WORKSPACE\Excavator\Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
-        #arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
+          arduino-cli compile --fqbn esp32:esp32:esp32:PSRAM=enabled -e $GITHUB_WORKSPACE/Excavator/Excavator.ino --build-property build.partitions=min_spiffs --build-property upload.maximum_size=1966080
         id: build_software
 
       - name: Checksum validation, Determine new Firmware version, Upload Firmware to cloud
         run: |
-          python  $env:GITHUB_WORKSPACE\Python_Scripts\verify_checksum.py
-        #python Python_Scripts/verify_checksum.py
+          python Python_Scripts/verify_checksum.py
         id: checksum
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
@@ -89,8 +85,7 @@ jobs:
 
       - name: Deploy new S/W to Excavator
         run: |
-          python $env:GITHUB_WORKSPACE\Python_Scripts\firebase_deploy_firmware.py
-        # python $GITHUB_WORKSPACE/Python_Scripts/firebase_deploy_firmware.py
+          python $GITHUB_WORKSPACE/Python_Scripts/firebase_deploy_firmware.py
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
 
