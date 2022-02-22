@@ -16,6 +16,8 @@ jobs:
           echo $EVENT_CONTEXT
           echo $COMMIT_TIMESTAMP
           echo $COMMIT_MESSAGE
+          echo $GITHUB_WORKSPACE
+          echo $GITHUB_WORKSPACE\Python_Scripts
 
       - name: Setup Python 3.10.1
         uses: actions/setup-python@v2
