@@ -12,7 +12,7 @@ receiver_email = "kumbhat10@gmail.com"
 
 yagmail.register(sender_email, password)
 yag = yagmail.SMTP(sender_email)
-to = [receiver_email, "dushyant.kumbhat@tatatechnologies.com"]
+to = [receiver_email, "dushyant.kumbhat@gmail.com"]
 
 subject = 'Github CI-CD Actions - Successfull '
 body = 'Successfully build new firmware and uploaded to google cloud. Please check below link'
