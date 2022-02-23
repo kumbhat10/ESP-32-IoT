@@ -9,7 +9,6 @@ get_keyring()
 
 sender_email = "tatatechnologiesdk@gmail.com"
 receiver_email = "kumbhat10@gmail.com"
-password = "Kanakrajj10"
 
 yagmail.register(sender_email, password)
 yag = yagmail.SMTP(sender_email)
@@ -21,7 +20,7 @@ html = '<a href="https://pypi.python.org/pypi/sky/">Click me!</a>'
 img = 'https://i.pinimg.com/564x/88/19/4a/88194a590eb82d70365f9887aa1091ee.jpg'
 
 # workspace = os.environ.get("GITHUB_WORKSPACE")
-# source_file_path = 'Excavator/build/esp32.esp32.esp32/Excavator.ino.bin'  
+# source_file_path = 'Excavator/build/esp32.esp32.esp32/Excavator.ino.bin'
 # source_file_name = os.path.join(workspace, source_file_path)
 
 # commit_timestamp = parser.parse(os.environ.get("COMMIT_TIMESTAMP")).strftime("%Y%m%d_%H%M%S")
