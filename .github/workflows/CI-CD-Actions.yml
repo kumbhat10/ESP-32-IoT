@@ -51,6 +51,7 @@ jobs:
 
       - name: Setup build Environment and Config file
         run: |
+          arduino-cli version
           arduino-cli config init
           arduino-cli config set sketch.always_export_binaries true
 
