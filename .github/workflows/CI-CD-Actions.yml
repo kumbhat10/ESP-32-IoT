@@ -13,7 +13,6 @@ jobs:
           COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
           COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
         run: |
-          exit 1
           echo $EVENT_CONTEXT
           echo $COMMIT_TIMESTAMP
           echo $COMMIT_MESSAGE
