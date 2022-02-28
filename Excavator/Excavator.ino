@@ -7,7 +7,7 @@
 #include <addons/RTDBHelper.h>
 #include <EEPROM.h>
 #include <movingAvg.h>                  // https://github.com/JChristensen/movingAvg
-movingAvg battVoltage(20);
+movingAvg battVoltage(10);
 
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>

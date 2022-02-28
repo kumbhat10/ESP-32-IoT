@@ -38,6 +38,8 @@ void FirebaseInit() {
   Firebase.begin(&config, &auth);
   Firebase.FCM.setServerKey(FIREBASE_FCM_SERVER_KEY);
   Firebase.reconnectWiFi(true);
+  Serial.println();
+  Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
   Serial.println("Connecting to Google Firebase..."); //while(Firebase
   Serial.println();
   while (!Firebase.ready()) {
@@ -53,19 +55,12 @@ void FirebaseInit() {
     Serial.printf("sream begin error, %s\n\n", stream.errorReason().c_str());
   Firebase.RTDB.setMultiPathStreamCallback(&stream, streamCallback, streamTimeoutCallback);
 }
-//0-8  belt -1
-//1-9 ccw / clockwise
-//2-10  - up / down 2nd arm
-//3-11 grab/release
-//4-12 - sound/light
-//5-13 - bucket down/up
-//6-14 - up/down main arm
-//7-15 -  belt2
 
 bool buzzed = false;
 bool bs = 1;
 void streamCallback(MultiPathStream stream)
 {
+  Serial.println("Received");
   ledStateBlinkCount = 2;
   if (buzzed && bs == 1)buzStateBlinkCount = 2;
   size_t numChild = sizeof(childPath) / sizeof(childPath[0]);
@@ -273,14 +268,7 @@ void checkDriveDelay() {
     drive(8, 0);
   }
 }
-//0-8  belt -1     +ve back , -ve forward
-//1-9 ccw / clockwise   -ve clockwise  -ve for all 8-15 relays
-//2-10  - up / down 2nd arm
-//3-11 grab/release
-//4-12 - sound/light
-//5-13 - bucket down/up
-//6-14 - up/down main arm
-//7-15 -  belt2
+
 void streamTimeoutCallback(bool timeout)
 {
   if (timeout)
@@ -291,8 +279,6 @@ void streamTimeoutCallback(bool timeout)
 
 void sendMessage(String title, String body)
 {
-  //Serial.println("Send Firebase Cloud Messaging... ");
-  //Read more details about HTTP v1 API here https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
   FCM_Legacy_HTTP_Message msg;
   msg.targets.to = "/topics/Alert";
   msg.options.time_to_live = "1000";
@@ -303,7 +289,7 @@ void sendMessage(String title, String body)
   payload.add("D", "excavator" );
   msg.payloads.data = payload.raw();
   if (Firebase.FCM.send(&fbdo1, &msg)) {//send message to recipient
-    //    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo1).c_str());
+    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo1).c_str());
   } else {
     Serial.println("Cloud messaging failed");
     Serial.println(fbdo1.errorReason());
