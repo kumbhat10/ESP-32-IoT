@@ -60,7 +60,6 @@ bool buzzed = false;
 bool bs = 1;
 void streamCallback(MultiPathStream stream)
 {
-  Serial.println("Received");
   ledStateBlinkCount = 2;
   if (buzzed && bs == 1)buzStateBlinkCount = 2;
   size_t numChild = sizeof(childPath) / sizeof(childPath[0]);
