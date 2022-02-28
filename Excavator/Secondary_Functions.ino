@@ -288,9 +288,9 @@ void sendMessage(String title, String body)
   payload.add("D", "excavator" );
   msg.payloads.data = payload.raw();
   if (Firebase.FCM.send(&fbdo1, &msg)) {//send message to recipient
-    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo1).c_str());
+//    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo1).c_str());
   } else {
-    Serial.println("Cloud messaging failed");
+    Serial.println("Cloud messaging failed -> ");
     Serial.println(fbdo1.errorReason());
   }
 }
