@@ -2,7 +2,7 @@ name: CICD-Actions
 on: [push]
 jobs:
   Build-Software-ESP32-CI-CD:
-    if: "!contains(github.event.commits[0].message, '[skip excavator]')"
+    if: "!contains(github.event.commits[0].message, '[skip excavator1]')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Github Repository
@@ -43,7 +43,7 @@ jobs:
 
       - name: Decrypt credentials for ESP32 - Wifi, Cloud messaging, Storage bucket - GNU Privacy Guard
         run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h $GITHUB_WORKSPACE/Excavator/firebase-key-excavator.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase="${{ secrets.GPG_PASSPHRASE }}" --output $GITHUB_WORKSPACE/Excavator/credentials.h $GITHUB_WORKSPACE/Python_Scripts/credentials-arduino.gpg
         env:
             GPG_PASSPHRASE: ${{secrets.GPG_PASSPHRASE}}
 

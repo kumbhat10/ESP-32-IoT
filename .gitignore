@@ -1,8 +1,9 @@
 git_push_all.bat
 google-services*
 firebase-adminsdk-key*
-*credentials*
 Excavator/credentials*
 Excavator/*.bin
 Excavator/build*
+Robot/*.bin
+Robot/build*
 *.bin
