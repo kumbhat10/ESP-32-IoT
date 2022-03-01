@@ -1,9 +1,3 @@
-//#define WIFI_SSID "4207 Hyperoptic Fibre 2.4Ghz"
-//#define WIFI_PASSWORD "SA6cL5AEDYmz"
-#define WIFI_SSID "Dushyant's Galaxy S21 Ultra 5G"
-#define WIFI_PASSWORD "qwerty12"
-//#define WIFI_SSID "Pixel6"
-//#define WIFI_PASSWORD "qwerty12"
 void WiFiSetup() {
   Serial.print("Connecting to ");
   Serial.print(WIFI_SSID);
@@ -25,7 +19,7 @@ void WiFiSetup() {
 }
 
 String parentPath = "Robot/Control/data";
-String childPath[8] = {"/AT", "/lx", "/ly", "/rx", "/ry", "/tr", "/Buzz", "/bs"};
+String childPath[10] = {"/AT", "/lx", "/ly", "/rx", "/ry", "/tr", "/Buzz", "/bs", "/msg", "/Firmware"};
 
 void FirebaseInit() {
   config.api_key = API_KEY;
@@ -35,37 +29,35 @@ void FirebaseInit() {
   auth.user.password = USER_PASSWORD;
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);//  Firebase.setMaxErrorQueue(fbdo, 3);
-  Serial.println("Connecting to Firebase..."); //while(Firebase
-  Serial.println();
+  Serial.printf("\nFirebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
+  Serial.println("Connecting to Google Firebase...\n");
   while (!Firebase.ready()) {
     blinkLED1();
   }
   buzOnce();
   digitalWrite(LED_BUILTIN, LOW); ledState = true;
   Serial.println("Sending Cloud message notification...");
-  sendMessage();
+  if (!newFirmwareAnnounce) sendMessage("Robot is Online! ", "Robot was restarted");
   buzOnce();
   Serial.println("Begin streaming");
-  //  if (!Firebase.beginStream(stream, "/Control/data"))
-  //    Serial.printf("sream begin error, %s\n\n", stream.errorReason().c_str());
-  //  Firebase.setStreamCallback(stream, streamCallback, streamTimeoutCallback);
-  if (!Firebase.beginMultiPathStream(stream, parentPath))
+  if (!Firebase.RTDB.beginMultiPathStream(&stream, parentPath))
     Serial.printf("sream begin error, %s\n\n", stream.errorReason().c_str());
-  Firebase.setMultiPathStreamCallback(stream, streamCallback, streamTimeoutCallback);
+  Firebase.RTDB.setMultiPathStreamCallback(&stream, streamCallback, streamTimeoutCallback);
 }
 bool buzzed = false;
 bool bs = 1;
-void streamCallback(MultiPathStreamData stream)
+void streamCallback(MultiPathStream stream)
 {
   ledStateBlinkCount = 3;
-  if (buzzed)buzStateBlinkCount = 2;
+  if(buzzed && bs == 1)buzStateBlinkCount = 2;
   size_t numChild = sizeof(childPath) / sizeof(childPath[0]);
   for (size_t i = 0; i < numChild; i++)
   {
     if (stream.get(childPath[i])) {
       switch (i) {
         case 0:
-          //          Serial.println(stream.value.c_str());
+          Serial.print("AT command : ");
+          Serial.println(stream.value.c_str());
           Serial7600.println(stream.value.c_str());
           break;
         case 1:
@@ -84,17 +76,48 @@ void streamCallback(MultiPathStreamData stream)
           tr = stream.value.toInt();
           break;
         case 6:
-          if (buzzed)buzStateBlinkCount = 6;
+          if (buzzed) buzStateBlinkCount = 6;
           buzzed = true;
           break;
         case 7:
           bs = stream.value.toInt();
+          if(bs == 1) buzStateBlinkCount = 2;
           break;
+        case 8: //sms - msg
+          {
+            int msg = stream.value.toInt();
+            if (msg == 1) {
+              Serial.println("Request to send sms");
+              SendMessage();
+            }
+            break;
+          }
+        case 9: { //Firmware updates
+            fv_name = stream.value.c_str();
+            if (newFirmwareAnnounce) {
+              sendMessage("Robot: Firmware updated ", fv_name + " successfully installed");
+              newFirmwareAnnounce = false;
+            }
+            Serial.print("Firmware Update: ");
+            Serial.println(fv_name);
+            if (firmwareVersion != fv_name.substring(25).toInt())
+            {
+              newFirmware = true;
+              newFirmwareVersion = fv_name.substring(25).toInt();
+              Serial.print("New Firmware Found: ");
+              Serial.println(fv_name.substring(25));  //8_8_6_x
+              updateFirmware(fv_name);
+            }
+          }
       }
     }
   }
 }
-
+void updateFirmware(String firmwareName) {
+  sendMessage("Robot: Downloading new firmware", fv_name);
+  if (!Firebase.Storage.downloadOTA(&stream, STORAGE_BUCKET_ID, firmwareName + ".bin", fcsDownloadCallback))
+    Serial.println(stream.errorReason());
+}
 void streamTimeoutCallback(bool timeout)
 {
   if (timeout)
@@ -103,19 +126,23 @@ void streamTimeoutCallback(bool timeout)
     Serial.printf("error code: %d, reason: %s\n\n", stream.httpCode(), stream.errorReason().c_str());
 }
 
-void sendMessage()
+void sendMessage(String title, String body)
 {
-  fbdo1.fcm.begin(FIREBASE_FCM_SERVER_KEY);    
-  fbdo1.fcm.setTopic("Alert");    
-  fbdo1.fcm.setPriority("high");    
-  fbdo1.fcm.setTimeToLive(1000);
-  fbdo1.fcm.setNotifyMessage("IoT Robot is Online! ", "Robot was restarted");
-  FirebaseJson json1;
-  json1.add("D", "robot" );
-  fbdo1.fcm.setDataMessage(json1);
-  Serial.printf("Send cloud message... %s\n", 
-  Firebase.sendTopic(fbdo1) ? "Successful" : 
-  fbdo1.errorReason().c_str());
+  FCM_Legacy_HTTP_Message msg;
+  msg.targets.to = "/topics/Alert";
+  msg.options.time_to_live = "1000";
+  msg.options.priority = "high";
+  msg.payloads.notification.title = title; //"Robot is Online! ";
+  msg.payloads.notification.body = body; //"Robot was restarted";
+  FirebaseJson payload;    //all data key-values should be string
+  payload.add("D", "robot" );
+  msg.payloads.data = payload.raw();
+  if (Firebase.FCM.send(&fbdo1, &msg)) {//send message to recipient
+    //    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo1).c_str());
+  } else {
+    Serial.println("Cloud messaging failed -> ");
+    Serial.println(fbdo1.errorReason());
+  }
 }
 
 void getLocalTime()
@@ -135,35 +162,33 @@ void writeFirebase(String message, String path) {
   json.add("M", message );
   json.add("D", date2 );
   json.add("T", time1 );
-  Firebase.setJSONAsync(fbdo, path, json);
+  Firebase.RTDB.setJSONAsync(&fbdo, path, &json);//Firebase.setJSONAsync(fbdo, path, json);
 }
 
 void gpsRequest() {
   Serial7600.println("AT+CGNSSINFO");
-  //  Serial7600.println("AT+CGPSINFO");
 }
 
 float BVSlope = 3200 / 8.24;
 void CheckVoltage() {
-  //  Serial.print("Reporting Battery voltage  ");
   battVoltage.reading(analogRead(battVoltagePin));
 }
 void ReportVoltage() {
   int bv = analogRead(battVoltagePin);
   float voltagema = 0;
-  if (bv >= 100) {
+  if (bv >= 500) {
     voltagema = battVoltage.reading(bv) / BVSlope;
   } else {
     buzStateBlinkCount = 2;
   }
   FirebaseJson json;
   json.add("V", voltagema );
-  json.add("V_adc", voltagema *BVSlope);
+  json.add("V_adc", voltagema * BVSlope);
   json.add("i_adc", bv );
-  json.add("i_adc_V", bv/ BVSlope );
+  json.add("i_adc_V", bv / BVSlope );
   json.add("D", date2 );
   json.add("T", time1 );
-  Firebase.setJSONAsync(fbdo, "Robot/BatteryVoltage", json);
+  Firebase.RTDB.setJSONAsync(&fbdo, "Robot/BatteryVoltage", &json);
 }
 
 void BlinkLED() {
@@ -172,10 +197,8 @@ void BlinkLED() {
       ledPrevMillis = millis();
       if (ledState) {
         digitalWrite(LED_BUILTIN, HIGH);
-        digitalWrite(buzzer, LOW);//on
       } else {
         digitalWrite(LED_BUILTIN, LOW);
-        digitalWrite(buzzer, HIGH);//on
       }
       ledState = !ledState;
       ledStateBlinkCount = ledStateBlinkCount - 0.5;
@@ -186,7 +209,7 @@ void BlinkLED() {
 }
 void buzOnce() {
   digitalWrite(buzzer, HIGH);//on
-  delay(70);
+  delay(buzBlinkTime);
   digitalWrite(buzzer, LOW);//on
 }
 void PlayBuzzer() {
@@ -263,5 +286,36 @@ void DriveServo() {
     }
     pca9685.setPWM(baseR, 0, lxi);
     baseRP = millis();
+  }
+}
+//The Firebase Storage download callback function
+void fcsDownloadCallback(FCS_DownloadStatusInfo info)
+{
+  if (info.status == fb_esp_fcs_download_status_init)
+  {
+    Serial.printf("Downloading firmware %s (%d)\n", info.remoteFileName.c_str(), info.fileSize);
+    sendMessage("Excavator: New firmware " + fv_name, "Downloading new firmware....");
+  }
+  else if (info.status == fb_esp_fcs_download_status_download)
+  {
+    Serial.printf("Downloaded %d%s\n", (int)info.progress, "%");
+  }
+  else if (info.status == fb_esp_fcs_download_status_complete)
+  {
+    sendMessage("Excavator: New firmware " + fv_name , "Downloaded and restarting....");
+    EEPROM.write(2, newFirmwareVersion);
+    EEPROM.commit();
+    Serial.println("Update firmware completed.");
+    Serial.println("\nESP32 Restarting in 3 seconds...\n\n");
+    delay(3000);
+    ESP.restart();
+  }
+  else if (info.status == fb_esp_fcs_download_status_error)
+  {
+    Serial.println("Download " + fv_name + " failed " + info.errorMsg.c_str());
+    sendMessage("Excavator: Download firmware failed !", fv_name + " : " + info.errorMsg.c_str());
+    Serial.println("\nESP32 Restarting in 2 seconds...\n\n");
+    delay(2000);
+    ESP.restart();
   }
 }

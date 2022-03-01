@@ -38,10 +38,8 @@ void FirebaseInit() {
   Firebase.begin(&config, &auth);
   Firebase.FCM.setServerKey(FIREBASE_FCM_SERVER_KEY);
   Firebase.reconnectWiFi(true);
-  Serial.println();
-  Serial.printf("Firebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
-  Serial.println("Connecting to Google Firebase..."); //while(Firebase
-  Serial.println();
+  Serial.printf("\nFirebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
+  Serial.println("Connecting to Google Firebase...\n");
   while (!Firebase.ready()) {
     blinkLED1();
   }
@@ -190,10 +188,10 @@ void streamCallback(MultiPathStream stream)
             drive(8, i8);
             break;
           }
-        case 13: {//Firmware updates
+        case 13: { //Firmware updates
             fv_name = stream.value.c_str();
             if (newFirmwareAnnounce) {
-              sendMessage("Firmware updated ", fv_name + " successfully installed");
+              sendMessage("Excavator: Firmware updated ", fv_name + " successfully installed");
               newFirmwareAnnounce = false;
             }
             Serial.print("Firmware Update: ");
@@ -215,7 +213,7 @@ void streamCallback(MultiPathStream stream)
 void updateFirmware(String firmwareName) {
   //  fv_name = firmwareName;
   //  Firebase.RTDB.removeMultiPathStreamCallback(&stream);
-  sendMessage("Downloading new firmware", fv_name);
+  sendMessage("Excavator: Downloading new firmware", fv_name);
   if (!Firebase.Storage.downloadOTA(&stream, STORAGE_BUCKET_ID, firmwareName + ".bin", fcsDownloadCallback))
     Serial.println(stream.errorReason());
 }
@@ -288,7 +286,7 @@ void sendMessage(String title, String body)
   payload.add("D", "excavator" );
   msg.payloads.data = payload.raw();
   if (Firebase.FCM.send(&fbdo1, &msg)) {//send message to recipient
-//    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo1).c_str());
+    //    Serial.printf("ok\n%s\n\n", Firebase.FCM.payload(&fbdo1).c_str());
   } else {
     Serial.println("Cloud messaging failed -> ");
     Serial.println(fbdo1.errorReason());
@@ -321,7 +319,6 @@ void gpsRequest() {
 
 float BVSlope = 3315 / 8.37;
 void CheckVoltage() {
-  //  Serial.print("Reporting Battery voltage  ");
   battVoltage.reading(analogRead(battVoltagePin));
 }
 void ReportVoltage() {
@@ -396,7 +393,7 @@ void fcsDownloadCallback(FCS_DownloadStatusInfo info)
   if (info.status == fb_esp_fcs_download_status_init)
   {
     Serial.printf("Downloading firmware %s (%d)\n", info.remoteFileName.c_str(), info.fileSize);
-    sendMessage("New firmware " + fv_name, "Downloading new firmware....");
+    sendMessage("Excavator: New firmware " + fv_name, "Downloading new firmware....");
   }
   else if (info.status == fb_esp_fcs_download_status_download)
   {
@@ -404,18 +401,20 @@ void fcsDownloadCallback(FCS_DownloadStatusInfo info)
   }
   else if (info.status == fb_esp_fcs_download_status_complete)
   {
-    sendMessage("New firmware " + fv_name , "Downloaded and restarting....");
+    sendMessage("Excavator: New firmware " + fv_name , "Downloaded and restarting....");
     EEPROM.write(2, newFirmwareVersion);
     EEPROM.commit();
     Serial.println("Update firmware completed.");
-    Serial.println();
-    Serial.println("ESP32 Restarting in 3 seconds...\n\n");
+    Serial.println("\nESP32 Restarting in 3 seconds...\n\n");
     delay(3000);
     ESP.restart();
   }
   else if (info.status == fb_esp_fcs_download_status_error)
   {
     Serial.println("Download " + fv_name + " failed " + info.errorMsg.c_str());
-    sendMessage("Download firmware failed !", fv_name + " : " + info.errorMsg.c_str());
+    sendMessage("Excavator: Download firmware failed !", fv_name + " : " + info.errorMsg.c_str());
+    Serial.println("\nESP32 Restarting in 2 seconds...\n\n");
+    delay(2000);
+    ESP.restart();
   }
 }

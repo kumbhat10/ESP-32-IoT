@@ -2,10 +2,12 @@
 
 #include "HardwareSerial.h"
 #include "time.h"
-#include <FirebaseESP32.h>
-#include "addons/TokenHelper.h"//Provide the token generation process info.
-#include "addons/RTDBHelper.h"//Provide the RTDB payload printing info and other helper functions.
-#include <movingAvg.h>                  // https://github.com/JChristensen/movingAvg
+#include <Firebase_ESP_Client.h>
+#include "credentials.h"
+#include <addons/TokenHelper.h>
+#include <addons/RTDBHelper.h>
+#include <EEPROM.h>
+#include <movingAvg.h>
 movingAvg battVoltage(10);
 
 #include <Wire.h>
@@ -25,12 +27,6 @@ Adafruit_PWMServoDriver  pca9685 = Adafruit_PWMServoDriver(0x40);
 #define ATrx  34
 #define ATtx  25
 
-#define API_KEY "AIzaSyCA2zQP6hrOXAAsspTExUeQKsl4hhsJqOI" //"AIzaSyCIOWckVbYTrLsujeseL8eB-lVVD4O43nE"
-#define DATABASE_URL "https://ttl-iot-default-rtdb.europe-west1.firebasedatabase.app" //"fun-iot-default-rtdb.europe-west1.firebasedatabase.app"
-#define USER_EMAIL "kumbhat10@gmail.com"
-#define USER_PASSWORD "Kanakrajj10"
-#define FIREBASE_FCM_SERVER_KEY "AAAAzkYiwb0:APA91bEwuO6l8QJ-QE-FNMPcwmJwec-qaf1LXlNVoQ35xUUn3AJsBzykKg6NxI57xO5sKxYDQAmEOTqsFjC6ZZhA0lgTuEeScL9al4soFSu_4FQLBYfASLCdn6ICLZsO94aWsXGnVRFe"
-
 const char* ntpServer = "pool.ntp.org"; const long  gmtOffset_sec = 0; const int   daylightOffset_sec = 3600;
 char date1 [8]; char time1 [10];
 int date2 = 0;
@@ -44,7 +40,6 @@ bool buzState = false;
 double buzStateBlinkCount = 1;
 int buzBlinkTime = 20; //in milliseconds
 int buzPrevMillis = 0;
-
 
 //FirebaseJsonData lx, ly, rx, ry, tr;
 int lxi = 285;
@@ -74,6 +69,13 @@ unsigned long gripperP = 0;  //tr  - gripper
 FirebaseData stream, streamAT, fbdo, fbdo1;
 FirebaseAuth auth; FirebaseConfig config;
 
+volatile bool ATbusy = false;
+volatile bool newFirmware = false;
+volatile bool newFirmwareAnnounce = false;
+volatile int firmwareVersion = 0; //EEPROM.read(1); address 1
+volatile int newFirmwareVersion = 0; //EEPROM.read(2); address 2
+String fv_name = "";
+
 HardwareSerial Serial7600(1);
 
 class TaskScheduler {
@@ -99,23 +101,46 @@ void demo() {
   //  Serial7600.println("AT");
 }
 TaskScheduler localTimeTask(1000, getLocalTime);
-TaskScheduler bvCheckTask(20, CheckVoltage);
+TaskScheduler bvCheckTask(25, CheckVoltage);
 TaskScheduler batteryVoltageTask(1000, ReportVoltage);
-TaskScheduler gpsUpdateTask(5000, gpsRequest);
+TaskScheduler gpsUpdateTask(4000, gpsRequest);
 
 void setup()
 {
   Serial.begin(115200);
+  Serial.println();  Serial.println();  Serial.println();
+  EEPROM.begin(512);
+
+  EEPROM.write(1, 1); //remove it - set newFirmwareVersion to 1
+  EEPROM.write(2, 1); //remove it - set newFirmwareVersion to 1
+  EEPROM.commit(); //remove it
+
+  firmwareVersion = EEPROM.read(1);
+  newFirmwareVersion = EEPROM.read(2);
+
+  if (newFirmwareVersion != firmwareVersion) {
+    Serial.print("Previous Firmware Version : "); Serial.println(firmwareVersion);
+    Serial.print("New Firmware Version : "); Serial.println(newFirmwareVersion);
+    firmwareVersion = EEPROM.read(2);
+    EEPROM.write(1, newFirmwareVersion);
+    EEPROM.commit();
+    newFirmwareAnnounce = true;
+    Serial.println();
+    Serial.println("Firmware update was successfull : ");
+  }
+  Serial.print("Current firmware version is : ");  Serial.println(EEPROM.read(1));  Serial.println();
+
+
   Serial7600.begin(115200, SERIAL_8N1, ATrx, ATtx); // 34-RX 25-TX of ESP-Wrover
   battVoltage.begin();
   Wire.begin(I2C_SDA, I2C_SCL);// Initialize I2C connection
   pca9685.begin();  // Initialize PCA9685
   pca9685.setPWMFreq(50);  // This is the maximum PWM frequency
-  pca9685.setPWM(gripper, 0, tri);
-  pca9685.setPWM(gripperR, 0, rxi);
-  pca9685.setPWM(arm2, 0, ryi);
-  pca9685.setPWM(arm1, 0, lyi);
-  pca9685.setPWM(baseR, 0, lxi);
+  //  pca9685.setPWM(gripper, 0, tri);
+  //  pca9685.setPWM(gripperR, 0, rxi);
+  //  pca9685.setPWM(arm2, 0, ryi);
+  //  pca9685.setPWM(arm1, 0, lyi);
+  //  pca9685.setPWM(baseR, 0, lxi);
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(buzzer, OUTPUT); digitalWrite(buzzer, LOW); //off
   pinMode(battVoltagePin, INPUT);
@@ -130,10 +155,10 @@ void loop()
   BlinkLED();
   DriveServo();
   PlayBuzzer();
-  bvCheckTask.run();
-  batteryVoltageTask.run();
-  localTimeTask.run();
-  gpsUpdateTask.run();
+  if (!newFirmware) bvCheckTask.run();
+  if (!newFirmware) batteryVoltageTask.run();
+  if (!newFirmware) localTimeTask.run();
+  if (!ATbusy && !newFirmware) gpsUpdateTask.run();
   PlayBuzzer();
 }
 
@@ -142,7 +167,6 @@ void CheckATSerial() {
   while (Serial.available() > 0) {
     Serial7600.write(Serial.read());
   }
-
   while (Serial7600.available() > 0) {
     char inByte = Serial7600.read();
     static char message[MAX_MESSAGE_LENGTH];
@@ -153,16 +177,28 @@ void CheckATSerial() {
     } else // Full message received...
     {
       message[message_pos] = '\0';
-      if (message_pos > 2) {
-        //        Serial.print("Message pos :  ");
-        //        Serial.println(message_pos);
-        //        Serial.println(message);
-        if (message_pos > 70) writeFirebase(message, "Robot/Control/GNSS") ;// Firebase.setStringAsync(fbdo, "/Control/GNSS", message);
-        else if (message_pos > 50) writeFirebase(message, "Robot/Control/GPS"); //Firebase.setStringAsync(fbdo, "/Control/GPS", message);
+      if (strncmp(message, "OK", 2) != 0) {
+        if (message_pos > 2) {
+          if (strncmp(message, "+CGNSSINFO", 10) == 0) {
+            if (message_pos > 50 ) writeFirebase(message, "Robot/Control/GNSS");
+            else Serial.println("Empty message received");
+          }
+          else if (strncmp(message, "+CGPSINFO", 9) == 0) {
+            if (message_pos > 50 ) writeFirebase(message, "Robot/Control/GPS");
+          }
+          else {
+            writeFirebase(message, "Excavator/AT");
+            Serial.println(message);
+            if (strncmp(message, "PB DONE", 7) == 0) {
+              Serial.print("SMS check passed  -> Sending SMS to Dushyant");
+              ATbusy = true;
+              SendMessage();
+              ATbusy = false;
+            }
+          }
+        }
       }
       message_pos = 0;
     }
-
-    //    Serial.print(char(Serial7600.read()));
   }
 }

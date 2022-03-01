@@ -1,16 +1,15 @@
  void SendMessage()
 {
-//  Serial.println ("Sending Message");
-////  SIM900A.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
-//  delay(1000);
-//  Serial.println ("Set SMS Number");
-////  SIM900A.println("AT+CMGS=\"+6281542787536\"\r"); //Mobile phone number to send message
-//  delay(1000);
-//  Serial.println ("Set SMS Content");
-////  SIM900A.println("Good morning, how are you doing?");// Messsage content
-//  delay(100);
-//  Serial.println ("Finish");
-////  SIM900A.println((char)26);// ASCII code of CTRL+Z
-//  delay(1000);
-//  Serial.println ("Message has been sent ->SMS Selesai dikirim");
+  Serial.println ("Sending Message");
+  Serial7600.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+  delay(100);
+  Serial.println ("Set SMS Number");
+  Serial7600.println("AT+CMGS=\"447496393966\"\r"); //Mobile phone number to send message
+  delay(100);
+  Serial.println ("Set SMS Content");
+  Serial7600.println("Excavator was restarted");// Messsage content
+  delay(100);
+  Serial.println ("Sending SMS");
+  Serial7600.println((char)26);// ASCII code of CTRL+Z
+  Serial.println ("Message has been sent ->SMS Dushyant Kumbhat");
 } 
