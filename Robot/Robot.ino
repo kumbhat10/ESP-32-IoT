@@ -48,16 +48,16 @@ int rxi = 300;
 int ryi = 470;
 int tri = 270;
 
-int lx = 288;
-int ly = 376;
-int rx = 303;
-int ry = 470;
-int tr = 270;
+volatile int lx = 288;
+volatile int ly = 376;
+volatile int rx = 303;
+volatile int ry = 470;
+volatile int tr = 270;
 
-int baseRS = 3 ; //lx - base rotate
-int arm1S = 6 ;// ly - main arm
-int arm2S = 5; ///ry - second arm
-int gripperRS = 2;  //rx  - gripper rotate
+int baseRS = 1 ; //lx - base rotate
+int arm1S = 3 ;// ly - main arm
+int arm2S = 3; ///ry - second arm
+int gripperRS = 0;  //rx  - gripper rotate
 int gripperS = 0; // tr - gripper  45-103
 
 unsigned long baseRP = 0;  //lx - base rotate
