@@ -21,6 +21,7 @@ class bc:
 current_firmware_name = os.environ.get("current_firmware_name")
 current_firmware_checksum = os.environ.get("current_firmware_checksum")
 workspace = os.environ.get("GITHUB_WORKSPACE")
+machine = os.environ.get("MACHINE")
 
 filename = 'Python_Scripts/Private-key.json'
 keypath = os.path.join(workspace, filename)
@@ -39,8 +40,8 @@ def firebase_login():
       print(bc.WARNING + '\nGoogle Firebase - Initialized Successfully\n'+ bc.ENDC)
 firebase_login()
 print( bc.OKGREEN + "\nWriting to Firebase"+ bc.ENDC)
-ref = db.reference('Excavator/Control/data/Firmware')
+ref = db.reference(machine + '/Control/data/Firmware')
 # ref.set(current_firmware_name)  # comment to not deploy the firmware
 print( bc.OKGREEN + "\nWriting to Firebase Firmware"+ bc.ENDC)
-ref = db.reference('Excavator/Firmware')
+ref = db.reference(machine + '/Firmware')
 ref.set({'Name': current_firmware_name, 'md5 Checksum': current_firmware_checksum})

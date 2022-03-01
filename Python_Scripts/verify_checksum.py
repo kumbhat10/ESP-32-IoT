@@ -23,7 +23,7 @@ event_context_json = json.loads(event_context_string)
 filename = 'Python_Scripts/Private-key.json'
 keypath = os.path.join(workspace, filename)
 cred = firebase_admin.credentials.Certificate(keypath)
-raw_bin_file_path = 'Excavator/build/esp32.esp32.esp32/Excavator.ino.bin'
+raw_bin_file_path = machine + '/build/esp32.esp32.esp32/'+ machine + '.ino.bin'
 raw_bin_file_path = os.path.join(workspace, raw_bin_file_path)
 commit_timestamp = parser.parse(os.environ.get("COMMIT_TIMESTAMP")).strftime("%Y%m%d_%H%M%S")
 
@@ -54,9 +54,8 @@ f_db = firestore.client()
 doc_ref_firmware = f_db.collection('Firmware')
 doc_ref_firmware_machine = f_db.collection(machine)
 
-query = doc_ref_firmware.where("_firmware_machine", "==", machine).order_by("_firmware_version",  direction=firestore.Query.DESCENDING).limit(1)
+query = doc_ref_firmware.where("_firmware_machine", "==", machine).order_by("_firmware_version",  direction = firestore.Query.DESCENDING).limit(1)
 results = query.stream()
-
 for doc in results:
   document = doc.to_dict()
   last_firmware_name = doc.id
@@ -109,14 +108,8 @@ sendCloudNotification()
 
 ## Save to environment
 env_file = os.getenv('GITHUB_ENV')
-env_dict = {'last_firmware_name': last_firmware_name, 'current_firmware_checksum': current_firmware_checksum, 'current_firmware_name': current_firmware_name}
+env_dict = {'MACHINE': machine , 'last_firmware_name': last_firmware_name, 'current_firmware_checksum': current_firmware_checksum, 'current_firmware_name': current_firmware_name}
 print(env_dict)
 with open(env_file, "a") as myfile:
     for key in env_dict:
         myfile.write( key +  '=' + env_dict[key] + '\n')
-
-# ref = db.reference('Excavator/Firmware')
-# print("\nWriting to Firebase")
-# ref.child("Name").set(destination_blob_name)
-# ref.child("md5_checksum").set(checksum)
-# print(destination_blob_name)
