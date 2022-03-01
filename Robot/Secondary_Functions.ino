@@ -28,6 +28,7 @@ void FirebaseInit() {
   auth.user.email = USER_EMAIL;
   auth.user.password = USER_PASSWORD;
   Firebase.begin(&config, &auth);
+  Firebase.FCM.setServerKey(FIREBASE_FCM_SERVER_KEY);
   Firebase.reconnectWiFi(true);//  Firebase.setMaxErrorQueue(fbdo, 3);
   Serial.printf("\nFirebase Client v%s\n\n", FIREBASE_CLIENT_VERSION);
   Serial.println("Connecting to Google Firebase...\n");
@@ -49,7 +50,7 @@ bool bs = 1;
 void streamCallback(MultiPathStream stream)
 {
   ledStateBlinkCount = 3;
-  if(buzzed && bs == 1)buzStateBlinkCount = 2;
+  if (buzzed && bs == 1)buzStateBlinkCount = 2;
   size_t numChild = sizeof(childPath) / sizeof(childPath[0]);
   for (size_t i = 0; i < numChild; i++)
   {
@@ -81,7 +82,7 @@ void streamCallback(MultiPathStream stream)
           break;
         case 7:
           bs = stream.value.toInt();
-          if(bs == 1) buzStateBlinkCount = 2;
+          if (bs == 1) buzStateBlinkCount = 2;
           break;
         case 8: //sms - msg
           {
@@ -294,7 +295,7 @@ void fcsDownloadCallback(FCS_DownloadStatusInfo info)
   if (info.status == fb_esp_fcs_download_status_init)
   {
     Serial.printf("Downloading firmware %s (%d)\n", info.remoteFileName.c_str(), info.fileSize);
-    sendMessage("Excavator: New firmware " + fv_name, "Downloading new firmware....");
+    sendMessage("Robot: New firmware " + fv_name, "Downloading new firmware....");
   }
   else if (info.status == fb_esp_fcs_download_status_download)
   {
@@ -302,7 +303,7 @@ void fcsDownloadCallback(FCS_DownloadStatusInfo info)
   }
   else if (info.status == fb_esp_fcs_download_status_complete)
   {
-    sendMessage("Excavator: New firmware " + fv_name , "Downloaded and restarting....");
+    sendMessage("Robot: New firmware " + fv_name , "Downloaded and restarting....");
     EEPROM.write(2, newFirmwareVersion);
     EEPROM.commit();
     Serial.println("Update firmware completed.");
@@ -313,7 +314,7 @@ void fcsDownloadCallback(FCS_DownloadStatusInfo info)
   else if (info.status == fb_esp_fcs_download_status_error)
   {
     Serial.println("Download " + fv_name + " failed " + info.errorMsg.c_str());
-    sendMessage("Excavator: Download firmware failed !", fv_name + " : " + info.errorMsg.c_str());
+    sendMessage("Robot: Download firmware failed !", fv_name + " : " + info.errorMsg.c_str());
     Serial.println("\nESP32 Restarting in 2 seconds...\n\n");
     delay(2000);
     ESP.restart();

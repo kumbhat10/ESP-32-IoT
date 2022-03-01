@@ -110,14 +110,13 @@ void setup()
   Serial.begin(115200);
   Serial.println();  Serial.println();  Serial.println();
   EEPROM.begin(512);
-
-  EEPROM.write(1, 1); //remove it - set newFirmwareVersion to 1
-  EEPROM.write(2, 1); //remove it - set newFirmwareVersion to 1
-  EEPROM.commit(); //remove it
+//
+//  EEPROM.write(1, 1); //remove it - set newFirmwareVersion to 1
+//  EEPROM.write(2, 1); //remove it - set newFirmwareVersion to 1
+//  EEPROM.commit(); //remove it
 
   firmwareVersion = EEPROM.read(1);
   newFirmwareVersion = EEPROM.read(2);
-
   if (newFirmwareVersion != firmwareVersion) {
     Serial.print("Previous Firmware Version : "); Serial.println(firmwareVersion);
     Serial.print("New Firmware Version : "); Serial.println(newFirmwareVersion);
@@ -129,7 +128,6 @@ void setup()
     Serial.println("Firmware update was successfull : ");
   }
   Serial.print("Current firmware version is : ");  Serial.println(EEPROM.read(1));  Serial.println();
-
 
   Serial7600.begin(115200, SERIAL_8N1, ATrx, ATtx); // 34-RX 25-TX of ESP-Wrover
   battVoltage.begin();
@@ -187,7 +185,7 @@ void CheckATSerial() {
             if (message_pos > 50 ) writeFirebase(message, "Robot/Control/GPS");
           }
           else {
-            writeFirebase(message, "Excavator/AT");
+            writeFirebase(message, "Robot/AT");
             Serial.println(message);
             if (strncmp(message, "PB DONE", 7) == 0) {
               Serial.print("SMS check passed  -> Sending SMS to Dushyant");

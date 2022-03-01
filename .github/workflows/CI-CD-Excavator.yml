@@ -1,8 +1,8 @@
 name: CICD-Actions
 on: [push]
 jobs:
-  Build-Software-ESP32-CI-CD:
-    if: "!contains(github.event.commits[0].message, '[skip excavator1]')"
+  Build-Software-ESP32-CI-CD-Excavator:
+    if: ${{ !contains(github.event.commits[0].message, '[skip excavator]') &&  !contains(github.event.commits[0].message, '[excavator skip]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Github Repository
@@ -84,6 +84,7 @@ jobs:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
           COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
           COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
+          MACHINE: Excavator
 
       - name: Deploy new S/W to Excavator
         run: |

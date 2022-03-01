@@ -17,6 +17,7 @@ class bc:
 
 workspace = os.environ.get("GITHUB_WORKSPACE")
 event_context_string = os.environ.get("EVENT_CONTEXT")
+machine = os.environ.get("MACHINE")
 
 event_context_json = json.loads(event_context_string)
 filename = 'Python_Scripts/Private-key.json'
@@ -51,7 +52,9 @@ firebase_login()
 ## Get last firmware Version & CHecksum
 f_db = firestore.client()
 doc_ref_firmware = f_db.collection('Firmware')
-query = doc_ref_firmware.order_by("_firmware_version",  direction=firestore.Query.DESCENDING).limit(1)
+doc_ref_firmware_machine = f_db.collection(machine)
+
+query = doc_ref_firmware.where("_firmware_machine", "==", machine).order_by("_firmware_version",  direction=firestore.Query.DESCENDING).limit(1)
 results = query.stream()
 
 for doc in results:
@@ -63,12 +66,14 @@ current_firmware_version = int(last_firmware_version) + 1
 current_firmware_name = 'Firmware_' + commit_timestamp + '_' + str(current_firmware_version)
 current_firmware_file_name = current_firmware_name + '.bin'
 
+event_context_json['_firmware_machine'] = machine
 event_context_json['_firmware_version'] = current_firmware_version
 event_context_json['_firmware_checksum'] = current_firmware_checksum
 event_context_json['_firmware_date'] = int(commit_date)
 event_context_json['_firmware_time'] = int(commit_time)
-doc_ref = doc_ref_firmware.document(current_firmware_name).set(event_context_json)
 
+doc_ref = doc_ref_firmware.document(current_firmware_name).set(event_context_json)
+doc_ref_machine = doc_ref_firmware_machine.document(current_firmware_name).set(event_context_json)
 print( bc.WARNING + '\nmd5 checksum of previous firmware ' + last_firmware_name + ' : ' + last_firmware_checksum + bc.ENDC)
 print( bc.OKGREEN +   'md5 checksum of current  firmware ' + current_firmware_name + ' : ' + current_firmware_checksum + bc.ENDC)
 
