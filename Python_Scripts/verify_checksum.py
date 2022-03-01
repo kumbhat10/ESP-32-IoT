@@ -62,9 +62,11 @@ for doc in results:
   last_firmware_name = doc.id
   last_firmware_version = document['_firmware_version']
   last_firmware_checksum = document['_firmware_checksum']
+
 current_firmware_version = int(last_firmware_version) + 1
 current_firmware_name = 'Firmware_' + commit_timestamp + '_' + str(current_firmware_version)
 current_firmware_file_name = current_firmware_name + '.bin'
+
 
 event_context_json['_firmware_machine'] = machine
 event_context_json['_firmware_version'] = current_firmware_version
