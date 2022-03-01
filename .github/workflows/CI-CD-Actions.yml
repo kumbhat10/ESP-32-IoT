@@ -2,6 +2,7 @@ name: CICD-Actions
 on: [push]
 jobs:
   Build-Software-ESP32-CI-CD:
+    if: "!contains(github.event.commits[0].message, '[skip excavator]')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Github Repository
