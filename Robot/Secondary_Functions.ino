@@ -172,7 +172,15 @@ void gpsRequest() {
 
 float BVSlope = 3200 / 8.24;
 void CheckVoltage() {
-  battVoltage.reading(analogRead(battVoltagePin));
+//  battVoltage.reading(analogRead(battVoltagePin));
+  int bv = analogRead(battVoltagePin);
+  float voltagema = 0;
+  if (bv >= 500) {
+    battVoltage.reading(bv);
+  } else {
+    buzStateBlinkCount = 2;
+    ReportVoltage();
+  }
 }
 void ReportVoltage() {
   int bv = analogRead(battVoltagePin);
@@ -243,7 +251,7 @@ void blinkLED1() {
 }
 
 void DriveServo() {
-  if (millis() - gripperP > gripperS && tr != tri) {
+  if (tr != tri && millis() - gripperP > gripperS ) {
     if (tr > tri) {
       tri++;
     } else {
@@ -252,7 +260,7 @@ void DriveServo() {
     pca9685.setPWM(gripper, 0, tri);
     gripperP = millis();
   }
-  if (millis() - gripperRP > gripperRS && rx != rxi) {
+  if ( rx != rxi && millis() - gripperRP > gripperRS ) {
     if (rx > rxi) {
       rxi++;
     } else {
@@ -261,7 +269,7 @@ void DriveServo() {
     pca9685.setPWM(gripperR, 0, rxi);
     gripperRP = millis();
   }
-  if (millis() - arm2P > arm2S && ry != ryi) {
+  if ( ry != ryi && millis() - arm2P > arm2S ) {
     if (ry > ryi) {
       ryi++;
     } else {
@@ -270,7 +278,7 @@ void DriveServo() {
     pca9685.setPWM(arm2, 0, ryi);
     arm2P = millis();
   }
-  if (millis() - arm1P > arm1S && ly != lyi) {
+  if (ly != lyi &&  millis() - arm1P > arm1S ) {
     if (ly > lyi) {
       lyi++;
     } else {
@@ -279,7 +287,7 @@ void DriveServo() {
     pca9685.setPWM(arm1, 0, lyi);
     arm1P = millis();
   }
-  if (millis() - baseRP > baseRS && lx != lxi) {
+  if (lx != lxi && millis() - baseRP > baseRS ) {
     if (lx > lxi) {
       lxi++;
     } else {

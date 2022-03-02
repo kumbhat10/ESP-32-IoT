@@ -4,14 +4,19 @@ void WiFiSetup() {
   Serial.print("........");
   WiFi.setSleep(false);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  int wifi_millis = millis();
   while (WiFi.status() != WL_CONNECTED)
   {
     blinkLED1();
+    if (millis() - wifi_millis > 6000) {
+      Serial.print("\nRestarting ESP as WiFi not connected\n\n\n");
+      buzOnce();buzOnce();buzOnce();buzOnce();buzOnce();
+      ESP.restart();
+    }
   }
   buzOnce();
   digitalWrite(LED_BUILTIN, LOW); ledState = true;
-  Serial.println();
-  Serial.print("Connected to " + String(WIFI_SSID) + " with IP: ");
+  Serial.print("\nConnected to " + String(WIFI_SSID) + " with IP: ");
   Serial.print(WiFi.localIP());
   Serial.print(" Strength : ");
   Serial.print(WiFi.RSSI());
@@ -106,8 +111,8 @@ void streamCallback(MultiPathStream stream)
             Serial.println(i1);
             if (i1 != 0) {
               z1_millis = millis();
-              z1s = true;
             }
+            z1s = true;
             drive(1, i1);
             break;
           }
@@ -117,8 +122,8 @@ void streamCallback(MultiPathStream stream)
             Serial.println(i2);
             if (i2 != 0) {
               z2_millis = millis();
-              z2s = true;
             }
+            z2s = true;
             drive(2, i2);
             break;
           }
@@ -128,8 +133,9 @@ void streamCallback(MultiPathStream stream)
             Serial.println(i3);
             if (i3 != 0) {
               z3_millis = millis();
-              z3s = true;
+
             }
+            z3s = true;
             drive(3, i3);
             break;
           }
@@ -139,8 +145,8 @@ void streamCallback(MultiPathStream stream)
             Serial.println(i4);
             if (i4 != 0) {
               z4_millis = millis();
-              z4s = true;
             }
+            z4s = true;
             drive(4, i4);
             break;
           }
@@ -150,8 +156,8 @@ void streamCallback(MultiPathStream stream)
             Serial.println(i5);
             if (i5 != 0) {
               z5_millis = millis();
-              z5s = true;
             }
+            z5s = true;
             drive(5, i5);
             break;
           }
@@ -161,8 +167,8 @@ void streamCallback(MultiPathStream stream)
             Serial.println(i6);
             if (i6 != 0) {
               z6_millis = millis();
-              z6s = true;
             }
+            z6s = true;
             drive(6, i6);
             break;
           }
@@ -172,8 +178,8 @@ void streamCallback(MultiPathStream stream)
             Serial.println(i7);
             if (i7 != 0) {
               z7_millis = millis();
-              z7s = true;
             }
+            z7s = true;
             drive(7, i7);
             break;
           }
@@ -183,8 +189,8 @@ void streamCallback(MultiPathStream stream)
             Serial.println(i8);
             if (i8 != 0) {
               z8_millis = millis();
-              z8s = true;
             }
+            z8s = true;
             drive(8, i8);
             break;
           }
@@ -319,12 +325,20 @@ void gpsRequest() {
 
 float BVSlope = 3315 / 8.37;
 void CheckVoltage() {
-  battVoltage.reading(analogRead(battVoltagePin));
+  //  battVoltage.reading(analogRead(battVoltagePin));
+  int bv = analogRead(battVoltagePin);
+  float voltagema = 0;
+  if (bv >= 1000) {
+    battVoltage.reading(bv);
+  } else {
+    buzStateBlinkCount = 2;
+    ReportVoltage();
+  }
 }
 void ReportVoltage() {
   int bv = analogRead(battVoltagePin);
   float voltagema = 0;
-  if (bv >= 500) {
+  if (bv >= 1000) {
     voltagema = battVoltage.reading(bv) / BVSlope;
   } else {
     buzStateBlinkCount = 2;

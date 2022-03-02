@@ -8,7 +8,7 @@
 #include <addons/RTDBHelper.h>
 #include <EEPROM.h>
 #include <movingAvg.h>
-movingAvg battVoltage(10);
+movingAvg battVoltage(20);
 
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
@@ -56,7 +56,7 @@ volatile int tr = 270;
 
 int baseRS = 1 ; //lx - base rotate
 int arm1S = 3 ;// ly - main arm
-int arm2S = 3; ///ry - second arm
+int arm2S = 1; ///ry - second arm
 int gripperRS = 0;  //rx  - gripper rotate
 int gripperS = 0; // tr - gripper  45-103
 
@@ -101,8 +101,8 @@ void demo() {
   //  Serial7600.println("AT");
 }
 TaskScheduler localTimeTask(1000, getLocalTime);
-TaskScheduler bvCheckTask(25, CheckVoltage);
-TaskScheduler batteryVoltageTask(1000, ReportVoltage);
+TaskScheduler bvCheckTask(50, CheckVoltage);
+TaskScheduler batteryVoltageTask(2000, ReportVoltage);
 TaskScheduler gpsUpdateTask(4000, gpsRequest);
 
 void setup()
@@ -110,10 +110,10 @@ void setup()
   Serial.begin(115200);
   Serial.println();  Serial.println();  Serial.println();
   EEPROM.begin(512);
-//
-//  EEPROM.write(1, 1); //remove it - set newFirmwareVersion to 1
-//  EEPROM.write(2, 1); //remove it - set newFirmwareVersion to 1
-//  EEPROM.commit(); //remove it
+  //
+  //  EEPROM.write(1, 1); //remove it - set newFirmwareVersion to 1
+  //  EEPROM.write(2, 1); //remove it - set newFirmwareVersion to 1
+  //  EEPROM.commit(); //remove it
 
   firmwareVersion = EEPROM.read(1);
   newFirmwareVersion = EEPROM.read(2);
@@ -187,7 +187,11 @@ void CheckATSerial() {
           else {
             writeFirebase(message, "Robot/AT");
             Serial.println(message);
-            if (strncmp(message, "PB DONE", 7) == 0) {
+            if (strncmp(message, "MISSED_CALL", 11) == 0) {
+              Serial.println("Missed call now ");
+              Serial.println(message);
+            }
+            else if (strncmp(message, "PB DONE", 7) == 0) {
               Serial.print("SMS check passed  -> Sending SMS to Dushyant");
               ATbusy = true;
               SendMessage();

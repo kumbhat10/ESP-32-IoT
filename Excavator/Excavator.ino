@@ -7,7 +7,7 @@
 #include <addons/RTDBHelper.h>
 #include <EEPROM.h>
 #include <movingAvg.h>                  // https://github.com/JChristensen/movingAvg
-movingAvg battVoltage(10);
+movingAvg battVoltage(20);
 
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
@@ -98,8 +98,8 @@ void logMemory() {
 }
 
 TaskScheduler localTimeTask(1000, getLocalTime);
-TaskScheduler bvCheckTask(25, CheckVoltage);
-TaskScheduler batteryVoltageTask(1000, ReportVoltage);
+TaskScheduler bvCheckTask(50, CheckVoltage);
+TaskScheduler batteryVoltageTask(2000, ReportVoltage);
 TaskScheduler gpsUpdateTask(4000, gpsRequest);
 
 void setup()
@@ -158,16 +158,13 @@ void setup()
 void loop()
 {
   CheckATSerial();
-  BlinkLED();
   checkDriveDelay();
+  BlinkLED();
   PlayBuzzer();
   if (!newFirmware) bvCheckTask.run();
-  checkDriveDelay();
   if (!newFirmware) batteryVoltageTask.run();
-  checkDriveDelay();
   if (!newFirmware) localTimeTask.run();
   if (!ATbusy && !newFirmware) gpsUpdateTask.run();
-  checkDriveDelay();
 }
 
 const unsigned int MAX_MESSAGE_LENGTH = 100;
@@ -195,15 +192,33 @@ void CheckATSerial() {
             if (message_pos > 50 ) writeFirebase(message, "Excavator/Control/GPS");
           }
           else {
-            writeFirebase(message, "Excavator/AT");
-            Serial.println(message);
-            if (strncmp(message, "PB DONE", 7) == 0) {
-              Serial.print("SMS check passed  -> Sending SMS to Dushyant");
-              ATbusy = true;
-              SendMessage();
-              ATbusy = false;
+            if (strncmp(message, "MISSED_CALL", 11) == 0) {
+              Serial.print("Missed Call :");
+              Serial.println(message);
+              sendMessage("Excavator: Missed Call", "Missed Call from xxxxx");
+              writeFirebase(message, "Excavator/AT/MC");
             }
-
+            else if (strncmp(message, "RING", 4) == 0) {
+              Serial.print("Incoming call : ");
+              Serial.println(message);
+              sendMessage("Excavator: Incoming Call", "Incoming Call from xxxxx");
+              writeFirebase(message, "Excavator/AT/IC");
+            }            
+            else if (strncmp(message, "+CMTI:", 6) == 0) {
+              Serial.print("SMS Received : ");
+              Serial.println(message);
+              sendMessage("Excavator: SMS Received", "SMS Received from xxxxx");
+              writeFirebase(message, "Excavator/AT/SMS");
+            }
+            else if (strncmp(message, "PB DONE", 7) == 0) {
+              Serial.println("SMS check passed  -> Sending SMS to Dushyant");
+              ATbusy = true;
+              //SendMessage();
+              ATbusy = false;
+            } else {
+              Serial.println(message);
+              writeFirebase(message, "Excavator/AT/Other");
+            }
           }
         }
       }

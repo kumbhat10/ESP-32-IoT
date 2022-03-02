@@ -1,8 +1,8 @@
-name: CICD-Actions
+name: CICD-Robot
 on: [push]
 jobs:
   Build-Software-ESP32-CI-CD-Robot:
-    if: "!contains(github.event.commits[0].message, '[skip robot]')"
+    if: ${{ !contains(github.event.commits[0].message, '[skip robot]') &&  !contains(github.event.commits[0].message, '[robot skip]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Github Repository
