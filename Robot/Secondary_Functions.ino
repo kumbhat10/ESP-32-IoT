@@ -7,6 +7,11 @@ void WiFiSetup() {
   while (WiFi.status() != WL_CONNECTED)
   {
     blinkLED1();
+     if (millis() - wifi_millis > 8000) {
+      Serial.print("\nRestarting ESP as WiFi not connected\n\n\n");
+      buzOnce(); buzOnce(); buzOnce(); buzOnce(); buzOnce();
+      ESP.restart();
+    }
   }
   buzOnce();
   digitalWrite(LED_BUILTIN, LOW); ledState = true;
@@ -172,7 +177,7 @@ void gpsRequest() {
 
 float BVSlope = 3200 / 8.24;
 void CheckVoltage() {
-//  battVoltage.reading(analogRead(battVoltagePin));
+  //  battVoltage.reading(analogRead(battVoltagePin));
   int bv = analogRead(battVoltagePin);
   float voltagema = 0;
   if (bv >= 500) {
@@ -307,6 +312,8 @@ void fcsDownloadCallback(FCS_DownloadStatusInfo info)
   }
   else if (info.status == fb_esp_fcs_download_status_download)
   {
+    ledStateBlinkCount = 10;
+    if (buzzed && bs == 1) buzStateBlinkCount = 2;
     Serial.printf("Downloaded %d%s\n", (int)info.progress, "%");
   }
   else if (info.status == fb_esp_fcs_download_status_complete)

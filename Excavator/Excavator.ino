@@ -32,7 +32,7 @@ int ledBlinkTime = 40; //in milliseconds
 volatile int ledPrevMillis = 0;
 volatile bool ATbusy = false;
 bool buzState = false;
-double buzStateBlinkCount = 1;
+volatile double buzStateBlinkCount = 1;
 int buzBlinkTime = 20; //in milliseconds
 volatile int buzPrevMillis = 0;
 int buz_f = 180;
@@ -108,6 +108,7 @@ void setup()
   Serial.println();  Serial.println();  Serial.println();
   EEPROM.begin(512);
 
+  // Only to be used for New ESP32 for first time - then it automatically updates
   //  EEPROM.write(1, 1); //remove it - set newFirmwareVersion to 1
   //  EEPROM.write(2, 1); //remove it - set newFirmwareVersion to 1
   //  EEPROM.commit(); //remove it
@@ -203,7 +204,7 @@ void CheckATSerial() {
               Serial.println(message);
               sendMessage("Excavator: Incoming Call", "Incoming Call from xxxxx");
               writeFirebase(message, "Excavator/AT/IC");
-            }            
+            }
             else if (strncmp(message, "+CMTI:", 6) == 0) {
               Serial.print("SMS Received : ");
               Serial.println(message);

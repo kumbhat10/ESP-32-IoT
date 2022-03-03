@@ -32,12 +32,12 @@ char date1 [8]; char time1 [10];
 int date2 = 0;
 
 bool ledState = true;
-double ledStateBlinkCount = 3;
+volatile double ledStateBlinkCount = 3;
 int ledBlinkTime = 40; //in milliseconds
 int ledPrevMillis = 0;
 
 bool buzState = false;
-double buzStateBlinkCount = 1;
+volatile double buzStateBlinkCount = 1;
 int buzBlinkTime = 20; //in milliseconds
 int buzPrevMillis = 0;
 
@@ -110,7 +110,7 @@ void setup()
   Serial.begin(115200);
   Serial.println();  Serial.println();  Serial.println();
   EEPROM.begin(512);
-  //
+  // Only to be used for New ESP32 for first time - then it automatically updates
   //  EEPROM.write(1, 1); //remove it - set newFirmwareVersion to 1
   //  EEPROM.write(2, 1); //remove it - set newFirmwareVersion to 1
   //  EEPROM.commit(); //remove it
