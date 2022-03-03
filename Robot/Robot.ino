@@ -179,23 +179,38 @@ void CheckATSerial() {
         if (message_pos > 2) {
           if (strncmp(message, "+CGNSSINFO", 10) == 0) {
             if (message_pos > 50 ) writeFirebase(message, "Robot/Control/GNSS");
-            else Serial.println("Empty message received");
+            //else Serial.println("Empty message received");
           }
           else if (strncmp(message, "+CGPSINFO", 9) == 0) {
             if (message_pos > 50 ) writeFirebase(message, "Robot/Control/GPS");
           }
           else {
-            writeFirebase(message, "Robot/AT");
-            Serial.println(message);
             if (strncmp(message, "MISSED_CALL", 11) == 0) {
-              Serial.println("Missed call now ");
+              Serial.print("Missed Call :");
               Serial.println(message);
+              sendMessage("Robot: Missed Call", "Missed Call from xxxxx");
+              writeFirebase(message, "Robot/AT/MC");
+            }
+            else if (strncmp(message, "RING", 4) == 0) {
+              Serial.print("Incoming call : ");
+              Serial.println(message);
+              sendMessage("Robot: Incoming Call", "Incoming Call from xxxxx");
+              writeFirebase(message, "Robot/AT/IC");
+            }
+            else if (strncmp(message, "+CMTI:", 6) == 0) {
+              Serial.print("SMS Received : ");
+              Serial.println(message);
+              sendMessage("Robot: SMS Received", "SMS Received from xxxxx");
+              writeFirebase(message, "Robot/AT/SMS");
             }
             else if (strncmp(message, "PB DONE", 7) == 0) {
-              Serial.print("SMS check passed  -> Sending SMS to Dushyant");
+              Serial.println("SMS check passed  -> Sending SMS to Dushyant");
               ATbusy = true;
-//              SendMessage();
+              //SendMessage();
               ATbusy = false;
+            } else {
+              Serial.println(message);
+              writeFirebase(message, "Robot/AT/Other");
             }
           }
         }
