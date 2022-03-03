@@ -93,6 +93,7 @@ def upload_to_cloud():
     print(bc.OKGREEN + "New firmware uploaded to {}.".format(current_firmware_file_name)  + bc.ENDC)
 upload_to_cloud()
 
+
 def sendCloudNotification():
     topic = 'Alert'
     message = messaging.Message(
