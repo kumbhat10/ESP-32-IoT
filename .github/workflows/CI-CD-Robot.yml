@@ -87,6 +87,7 @@ jobs:
           MACHINE: Robot
 
       - name: Deploy new S/W to Robot
+        if: ${{ !contains(github.event.commits[0].message, '[skip robot deploy]') && !contains(github.event.commits[0].message, '[skip deploy robot]') &&  !contains(github.event.commits[0].message, '[robot skip deploy]') && !contains(github.event.commits[0].message, '[skip deploy]') }}
         run: |
           python $GITHUB_WORKSPACE/Python_Scripts/firebase_deploy_firmware.py
         env:
