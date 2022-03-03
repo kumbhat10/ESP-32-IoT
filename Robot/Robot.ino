@@ -194,7 +194,7 @@ void CheckATSerial() {
             else if (strncmp(message, "PB DONE", 7) == 0) {
               Serial.print("SMS check passed  -> Sending SMS to Dushyant");
               ATbusy = true;
-              SendMessage();
+//              SendMessage();
               ATbusy = false;
             }
           }

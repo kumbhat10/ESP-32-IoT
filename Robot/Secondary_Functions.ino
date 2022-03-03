@@ -4,10 +4,11 @@ void WiFiSetup() {
   Serial.print("........");
   WiFi.setSleep(false);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  int wifi_millis = millis();
   while (WiFi.status() != WL_CONNECTED)
   {
     blinkLED1();
-     if (millis() - wifi_millis > 8000) {
+    if (millis() - wifi_millis > 8000) {
       Serial.print("\nRestarting ESP as WiFi not connected\n\n\n");
       buzOnce(); buzOnce(); buzOnce(); buzOnce(); buzOnce();
       ESP.restart();

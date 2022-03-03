@@ -87,6 +87,7 @@ jobs:
           MACHINE: Excavator
 
       - name: Deploy new S/W to Excavator
+        if: ${{ !contains(github.event.commits[0].message, '[skip excavator deploy]') && !contains(github.event.commits[0].message, '[skip deploy excavator]') &&  !contains(github.event.commits[0].message, '[excavator skip deploy]') && !contains(github.event.commits[0].message, '[skip deploy]') }}
         run: |
           python $GITHUB_WORKSPACE/Python_Scripts/firebase_deploy_firmware.py
         env:
