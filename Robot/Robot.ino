@@ -70,6 +70,7 @@ FirebaseData stream, streamAT, fbdo, fbdo1;
 FirebaseAuth auth; FirebaseConfig config;
 
 volatile bool ATbusy = false;
+volatile bool downloading = false;
 volatile bool newFirmware = false;
 volatile bool newFirmwareAnnounce = false;
 volatile int firmwareVersion = 0; //EEPROM.read(1); address 1
@@ -153,10 +154,10 @@ void loop()
   BlinkLED();
   DriveServo();
   PlayBuzzer();
-  if (!newFirmware) bvCheckTask.run();
-  if (!newFirmware) batteryVoltageTask.run();
-  if (!newFirmware) localTimeTask.run();
-  if (!ATbusy && !newFirmware) gpsUpdateTask.run();
+  if (!newFirmware && !downloading) bvCheckTask.run();
+  if (!newFirmware && !downloading) batteryVoltageTask.run();
+  if (!newFirmware && !downloading) localTimeTask.run();
+  if (!ATbusy && !newFirmware && !downloading) gpsUpdateTask.run();
   PlayBuzzer();
 }
 
@@ -188,19 +189,19 @@ void CheckATSerial() {
             if (strncmp(message, "MISSED_CALL", 11) == 0) {
               Serial.print("Missed Call :");
               Serial.println(message);
-              sendMessage("Robot: Missed Call", "Missed Call from xxxxx");
+              sendMessage("Robot: Missed Call", "Missed Call");
               writeFirebase(message, "Robot/AT/MC");
             }
             else if (strncmp(message, "RING", 4) == 0) {
               Serial.print("Incoming call : ");
               Serial.println(message);
-              sendMessage("Robot: Incoming Call", "Incoming Call from xxxxx");
+              sendMessage("Robot: Incoming Call", "Incoming Call");
               writeFirebase(message, "Robot/AT/IC");
             }
             else if (strncmp(message, "+CMTI:", 6) == 0) {
               Serial.print("SMS Received : ");
               Serial.println(message);
-              sendMessage("Robot: SMS Received", "SMS Received from xxxxx");
+              sendMessage("Robot: SMS Received", "SMS Received");
               writeFirebase(message, "Robot/AT/SMS");
             }
             else if (strncmp(message, "PB DONE", 7) == 0) {

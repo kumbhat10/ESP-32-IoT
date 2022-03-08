@@ -51,8 +51,11 @@ void FirebaseInit() {
   buzOnce();
   digitalWrite(LED_BUILTIN, LOW); ledState = true;
   Serial.println("Sending Cloud notification to user...");
-  if (!newFirmwareAnnounce) sendMessage("Excavator is Online! ", "Excavator was restarted");
+  if (!newFirmwareAnnounce) {
+    sendMessage("Excavator is Online! ", "Excavator was restarted");
+  }
   buzOnce();
+  Firebase.RTDB.setIntAsync(&fbdo, "Excavator/AT/Update", 0);
   Serial.println("Start firebase streaming");
   if (!Firebase.RTDB.beginMultiPathStream(&stream, parentPath))
     Serial.printf("sream begin error, %s\n\n", stream.errorReason().c_str());
@@ -93,7 +96,9 @@ void streamCallback(MultiPathStream stream)
             String c = stream.value.c_str();
             Serial.print("AT command : ");
             Serial.println(c);
+            ATbusy = true;
             Serial7600.println(c);
+            ATbusy = false;
             break;
           }
         case 4: //pwr
@@ -200,7 +205,7 @@ void streamCallback(MultiPathStream stream)
               sendMessage("Excavator: Firmware updated ", fv_name + " successfully installed");
               newFirmwareAnnounce = false;
             }
-            Serial.print("Firmware Update: ");
+            Firebase.RTDB.setIntAsync(&fbdo, "Excavator/AT/Update", 0);            Serial.print("Firmware Update: ");
             Serial.println(fv_name);
             if (firmwareVersion != fv_name.substring(25).toInt())
             {
@@ -217,8 +222,8 @@ void streamCallback(MultiPathStream stream)
 }
 
 void updateFirmware(String firmwareName) {
-  //  fv_name = firmwareName;
-  //  Firebase.RTDB.removeMultiPathStreamCallback(&stream);
+  downloading = true;
+  Firebase.RTDB.setIntAsync(&fbdo, "Excavator/AT/Update", 0);
   sendMessage("Excavator: Downloading new firmware", fv_name);
   if (!Firebase.Storage.downloadOTA(&stream, STORAGE_BUCKET_ID, firmwareName + ".bin", fcsDownloadCallback))
     Serial.println(stream.errorReason());
@@ -414,7 +419,6 @@ void fcsDownloadCallback(FCS_DownloadStatusInfo info)
     ledStateBlinkCount = 10;
     if (buzzed && bs == 1) buzStateBlinkCount = 2;
     Serial.printf("Downloaded %d%s\n", (int)info.progress, "%");
-
   }
   else if (info.status == fb_esp_fcs_download_status_complete)
   {

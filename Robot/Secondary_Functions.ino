@@ -46,6 +46,7 @@ void FirebaseInit() {
   Serial.println("Sending Cloud message notification...");
   if (!newFirmwareAnnounce) sendMessage("Robot is Online! ", "Robot was restarted");
   buzOnce();
+  Firebase.RTDB.setIntAsync(&fbdo, "Robot/AT/Update", 0);
   Serial.println("Begin streaming");
   if (!Firebase.RTDB.beginMultiPathStream(&stream, parentPath))
     Serial.printf("sream begin error, %s\n\n", stream.errorReason().c_str());
@@ -101,6 +102,7 @@ void streamCallback(MultiPathStream stream)
           }
         case 9: { //Firmware updates
             fv_name = stream.value.c_str();
+            Firebase.RTDB.setIntAsync(&fbdo, "Robot/AT/Update", 0);
             if (newFirmwareAnnounce) {
               sendMessage("Robot: Firmware updated ", fv_name + " successfully installed");
               newFirmwareAnnounce = false;
@@ -121,6 +123,8 @@ void streamCallback(MultiPathStream stream)
   }
 }
 void updateFirmware(String firmwareName) {
+  downloading = true;
+  Firebase.RTDB.setIntAsync(&fbdo, "Robot/AT/Update", 0);
   sendMessage("Robot: Downloading new firmware", fv_name);
   if (!Firebase.Storage.downloadOTA(&stream, STORAGE_BUCKET_ID, firmwareName + ".bin", fcsDownloadCallback))
     Serial.println(stream.errorReason());
