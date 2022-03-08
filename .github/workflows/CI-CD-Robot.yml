@@ -8,7 +8,7 @@ jobs:
       - name: Checkout Github Repository
         uses: actions/checkout@v2
 
-      - name: Setup global constants & environment variables 
+      - name: Setup global constants & Environment variables
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
           COMMIT_TIMESTAMP: ${{ github.event.commits[0].timestamp }}
