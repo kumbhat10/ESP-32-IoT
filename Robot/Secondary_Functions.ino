@@ -124,7 +124,7 @@ void streamCallback(MultiPathStream stream)
 }
 void updateFirmware(String firmwareName) {
   downloading = true;
-  Firebase.RTDB.setIntAsync(&fbdo, "Robot/AT/Update", 0);
+  Firebase.RTDB.setIntAsync(&fbdo, "Robot/AT/Update", 1);
   sendMessage("Robot: Downloading new firmware", fv_name);
   if (!Firebase.Storage.downloadOTA(&stream, STORAGE_BUCKET_ID, firmwareName + ".bin", fcsDownloadCallback))
     Serial.println(stream.errorReason());
