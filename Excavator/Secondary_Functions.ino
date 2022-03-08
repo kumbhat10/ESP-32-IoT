@@ -427,6 +427,7 @@ void fcsDownloadCallback(FCS_DownloadStatusInfo info)
     EEPROM.commit();
     Serial.println("Update firmware completed.");
     Serial.println("\nESP32 Restarting in 3 seconds...\n\n");
+    Firebase.RTDB.setIntAsync(&fbdo, "Excavator/AT/Update", 2);
     delay(3000);
     ESP.restart();
   }
