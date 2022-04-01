@@ -1,3 +1,4 @@
+
 #include <WiFi.h>
 #include "HardwareSerial.h"
 #include "time.h"
@@ -170,9 +171,12 @@ void loop()
 }
 
 const unsigned int MAX_MESSAGE_LENGTH = 100;
+
 void CheckATSerial() {
   while (Serial.available() > 0) {
-    Serial7600.write(Serial.read());
+    char inByte1 = Serial.read();
+    Serial7600.write(inByte1);
+    Serial.print(inByte1);
   }
   while (Serial7600.available() > 0) {
     char inByte = Serial7600.read();
@@ -209,13 +213,13 @@ void CheckATSerial() {
             else if (strncmp(message, "+CMTI:", 6) == 0) {
               Serial.print("SMS Received : ");
               Serial.println(message);
-//              Serial.println(message[2]);
-//              Serial.println(message[3]);
-//              Serial.println(message[5]);
-//              Serial.printf("Characters 0 through 2 of a[]: %.3s\n", message);
-//              Serial.printf("Characters 0 through 2 of a[]: %.3s\n", &message);
-//              Serial.printf("Characters 10 through 15 of a[]: %.6s\n", message[10]);
-//              
+              //              Serial.println(message[2]);
+              //              Serial.println(message[3]);
+              //              Serial.println(message[5]);
+              //              Serial.printf("Characters 0 through 2 of a[]: %.3s\n", message);
+              //              Serial.printf("Characters 0 through 2 of a[]: %.3s\n", &message);
+              //              Serial.printf("Characters 10 through 15 of a[]: %.6s\n", message[10]);
+              //
               sendMessage("Excavator: SMS Received", "SMS Received");
               writeFirebase(message, "Excavator/AT/SMS");
             }

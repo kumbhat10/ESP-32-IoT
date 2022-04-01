@@ -1,3 +1,6 @@
+.vs/
+.vs*
+.vs/*
 git_push_all.bat
 google-services*
 firebase-adminsdk-key*
