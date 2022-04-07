@@ -32,6 +32,7 @@ volatile double ledStateBlinkCount = 3;
 int ledBlinkTime = 40; //in milliseconds
 volatile int ledPrevMillis = 0;
 volatile bool ATbusy = false;
+volatile bool downloading = false;
 bool buzState = false;
 volatile double buzStateBlinkCount = 1;
 int buzBlinkTime = 20; //in milliseconds
@@ -163,16 +164,19 @@ void loop()
   checkDriveDelay();
   BlinkLED();
   PlayBuzzer();
-  if (!newFirmware) bvCheckTask.run();
-  if (!newFirmware) batteryVoltageTask.run();
-  if (!newFirmware) localTimeTask.run();
-  if (!ATbusy && !newFirmware) gpsUpdateTask.run();
+  if (!newFirmware && !downloading) bvCheckTask.run();
+  if (!newFirmware && !downloading) batteryVoltageTask.run();
+  if (!newFirmware && !downloading) localTimeTask.run();
+  if (!ATbusy && !newFirmware && !downloading) gpsUpdateTask.run();
 }
 
 const unsigned int MAX_MESSAGE_LENGTH = 100;
+
 void CheckATSerial() {
   while (Serial.available() > 0) {
-    Serial7600.write(Serial.read());
+    char inByte1 = Serial.read();
+    Serial7600.write(inByte1);
+    Serial.print(inByte1);
   }
   while (Serial7600.available() > 0) {
     char inByte = Serial7600.read();
@@ -197,19 +201,26 @@ void CheckATSerial() {
             if (strncmp(message, "MISSED_CALL", 11) == 0) {
               Serial.print("Missed Call :");
               Serial.println(message);
-              sendMessage("Excavator: Missed Call", "Missed Call from xxxxx");
+              sendMessage("Excavator: Missed Call", "Missed Call");
               writeFirebase(message, "Excavator/AT/MC");
             }
             else if (strncmp(message, "RING", 4) == 0) {
               Serial.print("Incoming call : ");
               Serial.println(message);
-              sendMessage("Excavator: Incoming Call", "Incoming Call from xxxxx");
+              sendMessage("Excavator: Incoming Call", "Incoming Call");
               writeFirebase(message, "Excavator/AT/IC");
             }
             else if (strncmp(message, "+CMTI:", 6) == 0) {
               Serial.print("SMS Received : ");
               Serial.println(message);
-              sendMessage("Excavator: SMS Received", "SMS Received from xxxxx");
+              //              Serial.println(message[2]);
+              //              Serial.println(message[3]);
+              //              Serial.println(message[5]);
+              //              Serial.printf("Characters 0 through 2 of a[]: %.3s\n", message);
+              //              Serial.printf("Characters 0 through 2 of a[]: %.3s\n", &message);
+              //              Serial.printf("Characters 10 through 15 of a[]: %.6s\n", message[10]);
+              //
+              sendMessage("Excavator: SMS Received", "SMS Received");
               writeFirebase(message, "Excavator/AT/SMS");
             }
             else if (strncmp(message, "PB DONE", 7) == 0) {
@@ -228,3 +239,6 @@ void CheckATSerial() {
     }
   }
 }
+//strcpy( dtm, "Saturday March 25 1989" );
+//sscanf( dtm, "%s %s %d  %d", weekday, month, &day, &year );
+//printf("%s %d, %d = %s\n", month, day, year, weekday ); //March 25, 1989 = Saturday output
