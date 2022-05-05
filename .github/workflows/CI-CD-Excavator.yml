@@ -1,4 +1,4 @@
-name: CICD-Excavator
+name: Excavator-Pipeline
 on: [push]
 jobs:
   Build-Software-ESP32-CI-CD-Excavator:

@@ -1,4 +1,4 @@
-name: CICD-Robot
+name: Robot-Pipeline
 on: [push]
 jobs:
   Build-Software-ESP32-CI-CD-Robot:
