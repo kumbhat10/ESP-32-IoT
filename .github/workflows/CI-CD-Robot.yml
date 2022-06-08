@@ -64,7 +64,7 @@ jobs:
 
       - name: Google's Firebase - Download & Install library for ESP32
         run: |
-          arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32@3.2.2"
+          arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32@4.0.0"
 
       - name: Adafruit PWM Servo Driver - Download & Install library
         run: |
