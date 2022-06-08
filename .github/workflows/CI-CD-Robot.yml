@@ -62,6 +62,7 @@ jobs:
           arduino-cli core update-index
           arduino-cli core install esp32:esp32
 
+
       - name: Google's Firebase - Download & Install library for ESP32
         run: |
           arduino-cli lib install "Firebase Arduino Client Library for ESP8266 and ESP32@4.0.0"
