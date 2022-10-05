@@ -151,13 +151,13 @@ void setup()
 void loop()
 {
   CheckATSerial();
-  BlinkLED();
-  DriveServo();
-  PlayBuzzer();
-  if (!newFirmware && !downloading) bvCheckTask.run();
-  if (!newFirmware && !downloading) batteryVoltageTask.run();
+  //BlinkLED();
+  //DriveServo();
+  //PlayBuzzer();
+  //if (!newFirmware && !downloading) bvCheckTask.run();
+  //if (!newFirmware && !downloading) batteryVoltageTask.run();
   if (!newFirmware && !downloading) localTimeTask.run();
-  if (!ATbusy && !newFirmware && !downloading) gpsUpdateTask.run();
+  //if (!ATbusy && !newFirmware && !downloading) gpsUpdateTask.run();
   PlayBuzzer();
 }
 
