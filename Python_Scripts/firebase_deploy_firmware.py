@@ -2,6 +2,7 @@
 #pip install --upgrade firebase-admin
 import os
 import sys
+
 from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials, db, messaging
@@ -16,6 +17,7 @@ class bc:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
 
 current_firmware_name = os.environ.get("current_firmware_name")
 current_firmware_checksum = os.environ.get("current_firmware_checksum")
